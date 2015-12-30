@@ -1,0 +1,189 @@
+//------------------------------------------------------------------------------
+//
+//------------------------------------------------------------------------------
+
+template <class _Tp> inline const _Tp& lib_min(const _Tp& __a, const _Tp& __b) 
+{
+  return __b < __a ? __b : __a;
+}
+
+template <class _Tp> inline const _Tp& lib_max(const _Tp& __a, const _Tp& __b) 
+{
+  return  __a < __b ? __b : __a;
+}
+
+//------------------------------------------------------------------------------
+//
+//------------------------------------------------------------------------------
+
+inline size_t  __willow_hash_string(const char* __s)
+{
+  size_t __h = 0; 
+  for ( ; *__s; ++__s)
+  {
+     __h = 5*__h + *__s;
+  }
+
+  return size_t(__h);
+}
+
+inline size_t  __willow_hash_string(const std::string& __s)
+{
+  int __size = __s.length();
+  size_t __h = 0;
+ 
+  for ( int i = 0; i < __size; ++i)
+  {
+     __h = 5*__h + __s[i];
+  }
+
+  return size_t(__h);
+}
+
+template <class __T> class willow_hash 
+{
+};
+
+template <> class willow_hash<string> 
+{
+public:
+   size_t operator()(const string& __s) const { return __willow_hash_string(__s.c_str()); }    
+};
+
+template <>  class willow_hash<const string>
+{
+public:
+   size_t operator()(const string& __s) const { return __willow_hash_string(__s.c_str()); }
+};
+
+
+// addedbyyxb 20060602
+
+const char digits[] = {
+  '0' , '1' , '2' , '3' , '4' , '5' ,
+  '6' , '7' , '8' , '9' , 'a' , 'b' ,
+  'c' , 'd' , 'e' , 'f' , 'g' , 'h' ,
+  'i' , 'j' , 'k' , 'l' , 'm' , 'n' ,
+  'o' , 'p' , 'q' , 'r' , 's' , 't' ,
+  'u' , 'v' , 'w' , 'x' , 'y' , 'z'
+};
+
+template <class _Tp> inline std::string number_to_str(_Tp n)
+{		
+	int bMinus = 0 ;
+	if ( n < 0 )
+	{
+		bMinus = 1 ;
+		n = -n ;
+	}
+	
+	int size = (int)20;
+
+	string buf(size,'\0');
+
+	int charPos = size;
+
+	while (n >= 10)
+	{
+		buf[--charPos] = digits[(n % 10)];
+		n = n / 10;
+	}
+
+	buf[--charPos] = digits[n];
+	if ( bMinus ) 
+		buf[--charPos] = '-' ;
+			
+	return buf.substr(charPos,(size - charPos)) ; ;	
+}
+
+// 格式化字符串转换，科学计数法
+template <class _Tp> inline std::string number_to_str_science(_Tp n)
+{
+	std::string str ;
+    bool bMinus=false;
+    if(n<0)
+    {
+        bMinus=true;
+        n=-n;
+    }
+    if(n==0)
+        str="0";
+    else
+    {        
+        char sz[5];
+        while(n>0)
+        {
+            if(n>=1000L)
+            {
+                long nRem=n%1000L;
+                if(str.empty()==true)
+                    sprintf(sz,"%03d",nRem);
+                else
+                    sprintf(sz,"%03d,",nRem);
+                str=sz+str;
+            }
+            else
+            {
+                if(str.empty()==true)
+                    sprintf(sz,"%d",n);
+                else
+                    sprintf(sz,"%d,",n);
+                str=sz+str;
+            }
+            n/=1000L;
+        }
+    }
+    if(bMinus==true)
+        str="-"+str;
+    return str ;
+}
+
+
+template <class _Tp> inline std::string  float_to_str(_Tp f,long nRem = 9)
+{
+    bool bMinus=false;
+    if(f<0)
+    {
+        bMinus=true;
+        f=-f;
+    }
+    
+    long n=(long)f;
+    double fr=f-(double)n;
+    if(fr<0)
+    {
+        n--;
+        fr=f-n;
+    }
+	
+	std::string str = number_to_str(n) ;
+    
+    char sz1[20];
+    sprintf(sz1,"%%0.%df",nRem);
+    char sz[100];
+    float fRem=(float)0.4;
+    for(long i=nRem;i>0;i--)
+        fRem*=(float)0.1;
+    
+    sprintf(sz,sz1,fr+fRem);
+
+    if(bMinus==true)
+        str="-"+str;
+
+    char *p=strchr(sz,'.');
+    str+=p;
+    return str ;
+}
+
+
+template <class T>
+inline void PRINT_ELEMENTS (const T& coll, const char* optcstr="",const char* sepstr=" ")
+{
+    typename T::const_iterator pos;
+
+    std::cout << optcstr;
+    for (pos=coll.begin(); pos!=coll.end(); ++pos) {
+        std::cout << *pos << sepstr;
+    }
+    std::cout << std::endl;
+}
