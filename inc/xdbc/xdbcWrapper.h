@@ -1,8 +1,7 @@
 #ifndef __XDBC_WRAPPER_H__
 #define __XDBC_WRAPPER_H__
 
-#include "base/libdefs.h"
-#include "base/date.h"
+#include "base/libbase.h"
 #include "xdbc/x_prepareStatement.h"
 #include "xdbc/x_resultset.h"
 #include "xdbc/sqlException.h"
@@ -13,9 +12,10 @@ public:
 	xStmtWrapper(xPrepareStatement* pStmt = NULL,const string &runSql="") DECL_THROW_EXCEPTION(SQLException);
 	~xStmtWrapper();
 	
+	
+	void ReSet(xPrepareStatement* pStmt = NULL,const string &runSql="");
 	int executeUpdate() DECL_THROW_EXCEPTION(SQLException);
 	xResultSet * executeQuery() DECL_THROW_EXCEPTION(SQLException);
-	
 	
 	void setInt(int index, const int &value);
 	void setString(int index, const string &paramValue);
@@ -38,6 +38,7 @@ public:
 	xRsWrapper(xResultSet * rs = NULL);
 	~xRsWrapper();
 	
+	void ReSet(xResultSet * rs = NULL);
 	bool next() DECL_THROW_EXCEPTION(SQLException);
 	char getByte(int index);
 	short getShort(int index);

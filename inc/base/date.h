@@ -10,15 +10,9 @@
 #ifndef __WILLOW_DATE_H__
 #define __WILLOW_DATE_H__
 
-#include "libdefs.h"
-#include "base/libbase.h"
-#include "base/date2038.h"
-#include <string>
+#include "date2038.h"
 
 __WILLOW_BEGIN_NAMESPACE
-
-//#include <afx.h>
-#include <time.h>
 
 #ifdef WIN32
 #undef GetCurrentTime

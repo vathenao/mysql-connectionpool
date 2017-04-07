@@ -47,7 +47,8 @@
 #  define DECL_THROW_EXCEPTION(exception) throw(exception)
 #endif
 
-
+#define OUT 
+#define IN 
 
 //启动静态断言 （如果不定义此宏则静态断言无效）
 #define STATIC_ASSERT_ON

@@ -5,6 +5,9 @@
 #include "xdbcdefs.h"
 #include "x_prepareStatement.h"
 
+#ifndef CONFIG_FILE_NAME
+#define CONFIG_FILE_NAME "/home/vathena/common/inc/xdbc/xdbc.conf"
+#endif
 
 class xConnection
 {
@@ -25,6 +28,11 @@ public:
 	**<R>:A pointer to an XStatement instance, a handle is used to all subsequent operations whit the statement.
 	*/
 	virtual xPrepareStatement* prepareStatement(const string &sqlStr) DECL_THROW_EXCEPTION(SQLException)=0;
+	
+	virtual void TransactionStart()=0;
+	virtual void TransactionEnd()=0;
+	virtual void RollBack()=0;
+	virtual void Commit()=0;
 	
 	/*
 	**<D>:Lock the connection

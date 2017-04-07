@@ -10,7 +10,7 @@
 #ifndef __WILLOW_STRINGUTILS_H__
 #define __WILLOW_STRINGUTILS_H__
 
-#include "base/libdefs.h"
+#include "libcommon.h"
 
 __WILLOW_BEGIN_NAMESPACE
 

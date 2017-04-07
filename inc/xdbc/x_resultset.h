@@ -2,8 +2,7 @@
 #define __X_RESULTSET_H__
 
 #include <mysql.h>
-#include "base/libdefs.h"
-#include "base/date.h"
+#include "base/libbase.h"
 #include "xdbc/sqlException.h"
 
 

@@ -10,9 +10,7 @@
 #ifndef __WILLOW_STRINGBUFFER_H__
 #define __WILLOW_STRINGBUFFER_H__
 
-#include "base/libdefs.h"
-#include <string>
-using namespace std ;
+#include "libcommon.h"
 
 __WILLOW_BEGIN_NAMESPACE
 

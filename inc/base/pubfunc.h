@@ -1,13 +1,10 @@
 #ifndef __PUBFUNC_H__
 #define __PUBFUNC_H__
 
-#include "base/stringUtils.h"
-#include <string>
-#include <vector>
-#include <iostream>
-#include "base/CoreException.h"
+#include "stringUtils.h"
+#include <sstream>
+#include "CoreException.h"
 __USING_WILLOW_NS
-using namespace std;
 
 #define exstrcpy(dest_array, source) estrncpy(dest_array, source, #dest_array, #source, __FILE__, __LINE__)
 //#define  CopyToCharArray
@@ -55,6 +52,78 @@ inline int estrncpy(char (&dest)[BufferSize], const char*source,
     }
 
     return (int) i;
+}
+
+//判断字符串是否相等  是返回true 否返回false  因strcmp比较时代码容易写错，故增加此函数
+inline bool isEqual(const char *src, const char *dest)
+{
+    return 0 == strcmp(src, dest);
+}
+
+
+//判断字符串是否相等  是返回true 否返回false  因strcmp比较时代码容易写错，故增加此函数
+inline bool isEqual(const string& src, const char *dest)
+{
+    return isEqual(src.c_str(), dest);
+}
+
+//判断字符串不否相等  是返回true 否返回false  因strcmp比较时代码容易写错，故增加此函数
+inline bool isNotEqual(const char *src, const char *dest)
+{
+    return 0 != strcmp(src, dest);
+}
+
+//判断字符串不相等  是返回true 否返回false  因strcmp比较时代码容易写错，故增加此函数
+inline bool isNotEqual(const string& src, const char *dest)
+{
+    return isNotEqual( src.c_str(), dest );
+}
+
+//erase space which at left side of the string
+inline string lTrim(const string& src)
+{
+	string str = src;
+	if (str.empty()) 
+    {
+        return str;
+    }
+	
+	str.erase(0,str.find_first_not_of(" "));
+	return str;
+}
+
+//erase space which at right side of the string
+inline string rTrim(const string& src)
+{
+	string str = src;
+	if (str.empty()) 
+    {
+        return str;
+    }
+	
+	str.erase(str.find_last_not_of(" ") + 1);
+	return str;
+}
+
+//erase space which at both left and right side of the string
+inline string trim(const string& src)
+{
+	string str = src;
+	if (str.empty())   
+    {  
+        return str;  
+    }  
+    str.erase(0,str.find_first_not_of(" "));  
+    str.erase(str.find_last_not_of(" ") + 1);  
+    return str; 
+}
+
+inline long StringToLong(const string &src)
+{
+	long result;
+	istringstream is(src);
+	is >> result;
+	return result;
 }
 
 #endif

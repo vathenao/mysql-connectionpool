@@ -5,26 +5,24 @@
 **date:				16/11/2015
 **version:			V1.0.1
 ****************************************/
-#include "xdbc/connpool.h"
 #include "xdbc/mysqlConnection.h"
+#include "xdbc/connpoolException.h"
+#include "xdbc/connpool.h"
+#include <unistd.h>
 
 __CONNPOOL_LOCK_BEGIN_NAMESPACE
-pthread_mutex_t ConnPoolLock;
+pthread_mutex_t ConnPoolLock = PTHREAD_MUTEX_INITIALIZER;
 __CONNPOOL_LOCK_END_NAMESPACE
 
 //create a connection pool instance for each process, befor enter main
+
 ConnectionPool* ConnectionPool::connpool = NULL;
 ConnectionPool::Deleter ConnectionPool::deleter;
 
-ConnectionPool::ConnectionPool():m_maxSize(MAX_CONN_SIZE),m_curSize(0)
+ConnectionPool::ConnectionPool():m_curSize(0),m_itimeout(60)
 {
 	//cout << "come to the connection pool constructor" << endl;
-	Initialize(m_maxSize/2);
-}
-
-ConnectionPool::ConnectionPool(int size):m_maxSize(size),m_curSize(0)
-{
-	Initialize(m_maxSize/2);
+	Initialize();
 }
 
 ConnectionPool* ConnectionPool::GetInstance()
@@ -45,13 +43,39 @@ ConnectionPool* ConnectionPool::GetInstance()
 		catch(...)
 		{
 			pthread_mutex_unlock(&__CONNPOOL_LOCK_NAMESPACE::ConnPoolLock);
+			throw SQLException("ConnectionPool::GetInstance, unkown exception!");
 		}
 	}
 	pthread_mutex_unlock(&__CONNPOOL_LOCK_NAMESPACE::ConnPoolLock);
 	return connpool;
 }
 
-void ConnectionPool::GetConnection(xConnection **pConn)
+void ConnectionPool::GetConnection(xConnection **pConn, int timeout)
+{
+	time_t begin;
+	time_t now;
+	time(&begin);
+	int _timeout = timeout > 0 ? timeout : m_itimeout; 
+	
+	while(1)
+	{
+		GetConn( pConn );
+		if( *pConn )
+		{
+			break;
+		}
+		time(&now);
+		if( now - begin > _timeout)
+		{
+			string errmsg = "ERR_GETCONN_TIMEOUT";
+			throw ConnpollException(errmsg);
+		}
+		
+		sleep(1);
+	}
+}
+
+void ConnectionPool::GetConn(xConnection **pConn)
 {
 	//cout << "GetConnection，current thread:" << pthread_self() << endl;
 	*pConn = NULL;
@@ -69,7 +93,7 @@ void ConnectionPool::GetConnection(xConnection **pConn)
 		}
 	}
 	
-	if( !(*pConn) && ( m_curSize < MAX_CONN_SIZE ) )
+	if( !(*pConn) && ( m_curSize < m_maxSize ) )
 	{
 		try
 		{
@@ -99,43 +123,36 @@ void ConnectionPool::GetConnection(xConnection **pConn)
 		}
 	}
 	
-	if( !(*pConn) )
-	{
-		//应用上，此处更好的处理方式应该是如果超过连接池最大连接数，则等待直至有空闲连接或服务程序超时返回
-		string errmsg = "Maximum allowable number of database connections.";
-		throw SQLException(errmsg);
-	}
-	
 	pthread_mutex_unlock(&m_lock);
 	//return *pConn;
 }
 
-void ConnectionPool::Initialize(int size)
+void ConnectionPool::Initialize()
 {
-	if( size > MAX_CONN_SIZE )
-	{
-		size = MAX_CONN_SIZE;
-	}
-	
 	xConnection *pConn;
-	for(int i=0; i < size; i++)
+	pthread_mutex_init( &m_lock, NULL );
+	
+	//load the configuration file
+	LoadConfig();
+	
+	for(int i=0; i < m_maxSize/2; i++)
 	{
 		pConn = CreateConnection();
-		m_pConnList.push_back(pConn);
+		m_pConnList.push_back(pConn);	
 	}
 }
 
 xConnection* ConnectionPool::CreateConnection()
 {
 	xConnection *pConn;
-	if( XDBC_CONN_TYPE == _MYSQL )
+	if( m_dbtype == "MYSQL" )
 	{
-		pConn = new MysqlConnection();
+		pConn = new MysqlConnection(m_host, m_user, m_password, m_database);
 	}
-	else if( XDBC_CONN_TYPE == _ORACLE )
+	else if( m_dbtype == "ORACLE" )
 	{
 		//return you oracle connection in this case
-		string errmsg = "XDBC_CONN_TYPE of _ORACLE does not support";
+		string errmsg = "XDBC_CONN_TYPE of ORACLE does not support";
 		throw SQLException(errmsg);
 	}
 	else
@@ -159,9 +176,74 @@ void ConnectionPool::ReleaseConnection(xConnection* pConn)
 
 void ConnectionPool::DestoryConnPool()
 {
+	pthread_mutex_destroy( &m_lock );
+	pthread_mutex_destroy( &connpoollocklib::ConnPoolLock );
 	list<xConnection*>::iterator it;
 	for( it = m_pConnList.begin(); it != m_pConnList.end(); it++ )
 	{
 		delete (*it);
+	}
+}
+
+void ConnectionPool::LoadConfig(const string &fileName)
+{
+	try
+	{
+		VConfigHelper configHelper;
+		if( isNotEqual( fileName, "" ) )
+		{
+			configHelper.ReLoad(fileName);
+		}
+		else
+		{
+			configHelper.ReLoad(CONFIG_FILE_NAME);
+		}
+		
+		if( !configHelper.GetConfigStringValue("ConnInfo", "HOST", m_host) )
+		{
+			throw SQLException(configHelper.GetLastErrorMsg());
+		}
+		
+		if( !configHelper.GetConfigStringValue("ConnInfo", "USER", m_user) )
+		{
+			throw SQLException(configHelper.GetLastErrorMsg());
+		}
+		
+		if( !configHelper.GetConfigStringValue("ConnInfo", "PASSWD", m_password) )
+		{
+			throw SQLException(configHelper.GetLastErrorMsg());
+		}
+		
+		if( !configHelper.GetConfigStringValue("ConnInfo", "DATABASE", m_database) )
+		{
+			throw SQLException(configHelper.GetLastErrorMsg());
+		}
+		
+		if( !configHelper.GetConfigStringValue("ConnPoolConf", "DBTYPE", m_dbtype) )
+		{
+			throw SQLException(configHelper.GetLastErrorMsg());
+		}
+		
+		if( !configHelper.GetConfigIntValue("ConnPoolConf", "MAXCONNSIZE", m_maxSize) )
+		{
+			throw SQLException(configHelper.GetLastErrorMsg());
+		}
+		m_maxSize = m_maxSize < 200 ? m_maxSize : 200;
+		
+		if( !configHelper.GetConfigIntValue("ConnPoolConf", "TIMEOUT", m_itimeout) )
+		{
+			if( configHelper.GetLastErrorCode() != VCHP_KEY_NOTFOUND )
+			{
+				throw SQLException(configHelper.GetLastErrorMsg());
+			}
+		}
+		m_itimeout = (m_itimeout < 0 || configHelper.GetLastErrorCode() == VCHP_KEY_NOTFOUND) ? 60: m_itimeout;
+		
+	}
+	catch(CBaseException ex)
+	{
+		string errmsg = "Read configuration file infomation,";
+		errmsg.append(ex.getMessage());
+		throw SQLException(errmsg);
 	}
 }

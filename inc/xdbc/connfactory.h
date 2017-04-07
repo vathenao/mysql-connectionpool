@@ -6,7 +6,7 @@
 class CConnFactory
 {
 public:
-	static xConnection* GetConn(DBTYPE dbType);
+	static xConnection* GetConn();
 	~CConnFactory();
 private:
 	CConnFactory();

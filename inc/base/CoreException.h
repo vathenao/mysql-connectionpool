@@ -1,13 +1,7 @@
 #ifndef __COREEXCEPTION_H__
 #define __COREEXCEPTION_H__
 
-#include "base/libdefs.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <string.h>
-#include <string>
-using std::string;
+#include "libcommon.h"
 
 __WILLOW_BEGIN_NAMESPACE
 class CoreException

@@ -1,8 +1,6 @@
 #ifndef __BASE_EXCEPTION_H__
 #define __BASE_EXCEPTION_H__
 
-
-#include "libdefs.h"
 #include "CoreException.h"
  
 __WILLOW_BEGIN_NAMESPACE
@@ -21,6 +19,7 @@ public:
 private:
 	const static char CLASS_NAME[];
 };
+
 __WILLOW_END_NAMESPACE
 
 

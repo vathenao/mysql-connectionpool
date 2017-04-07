@@ -17,6 +17,17 @@ xStmtWrapper::~xStmtWrapper()
 	}
 }
 
+void xStmtWrapper::ReSet(xPrepareStatement* pStmt, const string &runSql) 
+{
+	if( m_pStmt )
+	{
+		delete m_pStmt;
+	}
+	
+	m_pStmt = pStmt;
+	m_runSql = runSql;
+}
+
 int xStmtWrapper::executeUpdate() DECL_THROW_EXCEPTION(SQLException)
 {
 	return m_pStmt->executeUpdate(m_runSql);
@@ -61,6 +72,10 @@ xRsWrapper::~xRsWrapper()
 	}
 }
 
+void xRsWrapper::ReSet(xResultSet * rs )
+{
+	m_rs = rs;
+}
 
 bool xRsWrapper::next() DECL_THROW_EXCEPTION(SQLException)
 {
