@@ -36,6 +36,6 @@ obj:$(OBJS)
 	
 clean:
 	@echo "clean all obj file ..."
-	@rm -f $(OBJ_DIR)/*
+	@rm -f $(OBJ_DIR)/*.o
 	@rm -f $(ARLIB_PATH)/$(ARLIB_FILE)
 
