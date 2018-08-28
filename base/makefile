@@ -30,7 +30,6 @@ all:$(OBJS)
 	@echo "link all obj file ..."
 	$(ARLIB_EXEC) $(ARLIB_PATH)/$(ARLIB_FILE) $(OBJ_DIR)/*.o
 	
-obj:$(OBJS)
 	
 clean:
 	@echo "clean all obj file ..."
