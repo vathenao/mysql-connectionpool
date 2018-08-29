@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "base/ConfigHelper.h"
-#include "base/BaseException.h"
+#include "ConfigHelper.h"
+#include "BaseException.h"
 
 __WILLOW_BEGIN_NAMESPACE
 

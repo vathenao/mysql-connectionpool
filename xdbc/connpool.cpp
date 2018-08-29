@@ -5,9 +5,14 @@
 **date:				16/11/2015
 **version:			V1.0.1
 ****************************************/
-#include "xdbc/mysqlConnection.h"
-#include "xdbc/connpoolException.h"
-#include "xdbc/connpool.h"
+
+#include "mysqlConnection.h"
+#include "connpoolException.h"
+#include "connpool.h"
+
+#include <base/configHelper.h>
+#include <base/pubfunc.h>
+
 #include <unistd.h>
 
 __CONNPOOL_LOCK_BEGIN_NAMESPACE

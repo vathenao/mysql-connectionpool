@@ -1,4 +1,4 @@
-#include "base/CoreException.h"
+#include "CoreException.h"
 
 __WILLOW_BEGIN_NAMESPACE
 const char CoreException::CLASS_NAME[] = "CoreException";

@@ -1,7 +1,7 @@
 #ifndef __X_CONNECTION_H__
 #define __X_CONNECTION_H__
 
-#include "xdbc/xdbcconfig.h"
+#include "xdbcconfig.h"
 #include "xdbcdefs.h"
 #include "x_prepareStatement.h"
 

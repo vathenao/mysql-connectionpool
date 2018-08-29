@@ -1,11 +1,11 @@
 #ifndef __CONNPOOL_EXCEPTION_H__
 #define __CONNPOOL_EXCEPTION_H__
 
-#include "base/CoreException.h"
+#include "base/exception.h"
 
 __USING_WILLOW_NS
 
-class ConnpollException: public CoreException
+class ConnpollException: public CBaseException
 {
 public:
 	ConnpollException();

@@ -1,4 +1,4 @@
-#include "xdbc/sqlException.h"
+#include "sqlException.h"
 
 const char SQLException::CLASS_NAME[] = "SQLException";
 const char* SQLException::getClassName() const
@@ -6,23 +6,35 @@ const char* SQLException::getClassName() const
   return  SQLException::CLASS_NAME;
 }
 
-SQLException::SQLException():CoreException(),long_vendorCode(0)
+SQLException::SQLException()
+	: CBaseException()
+	, long_vendorCode(0)
 {
 }
 
-SQLException::SQLException(const string& message):CoreException(message),long_vendorCode(0)
+SQLException::SQLException(const string& message)
+	: CBaseException(message)
+	, long_vendorCode(0)
 {
 }
 
-SQLException::SQLException(const string& message,const string& SQLState):CoreException(message),str_SQLState(SQLState),long_vendorCode(0)
+SQLException::SQLException(const string& message,const string& SQLState)
+	: CBaseException(message)
+	, str_SQLState(SQLState)
+	, long_vendorCode(0)
 {
 }
 
-SQLException::SQLException(const string& message,LONG_LONG vendorCode):CoreException(message),long_vendorCode(vendorCode)
+SQLException::SQLException(const string& message,LONG_LONG vendorCode)
+	: CBaseException(message)
+	, long_vendorCode(vendorCode)
 {
 }
 
-SQLException::SQLException(const string& message,const string& SQLState,LONG_LONG vendorCode):CoreException(message),str_SQLState(SQLState),long_vendorCode(vendorCode)
+SQLException::SQLException(const string& message,const string& SQLState,LONG_LONG vendorCode)
+	: CBaseException(message)
+	, str_SQLState(SQLState)
+	, long_vendorCode(vendorCode)
 {
 }
   
