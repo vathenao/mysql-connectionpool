@@ -3,7 +3,7 @@
 
 #include <mysql.h>
 #include "x_connection.h"
-#include "xdbc/mysqlPrepareStatement.h"
+#include "mysqlPrepareStatement.h"
 
 class MysqlConnection : public xConnection
 {

@@ -2,7 +2,6 @@
 #define __X_PREPARESTATEMENT_H__
 
 #include "x_statement.h"
-#include "base/date.h"
 
 class xPrepareStatement : public xStatement
 {

@@ -1,5 +1,5 @@
-#include "base/stringUtils.h"
-#include "base/stringBuffer.h"
+#include "stringUtils.h"
+#include "stringBuffer.h"
 
 #ifdef WIN32
 

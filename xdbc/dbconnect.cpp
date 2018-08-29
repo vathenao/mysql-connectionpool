@@ -1,4 +1,4 @@
-#include "xdbc/dbconnect.h"
+#include "dbconnect.h"
 
 DbConnect::DbConnect()
 {

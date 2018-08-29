@@ -1,10 +1,9 @@
 #ifndef __XDBC_WRAPPER_H__
 #define __XDBC_WRAPPER_H__
 
-#include "base/libbase.h"
-#include "xdbc/x_prepareStatement.h"
-#include "xdbc/x_resultset.h"
-#include "xdbc/sqlException.h"
+#include "x_prepareStatement.h"
+#include "x_resultset.h"
+#include "sqlException.h"
 
 class xStmtWrapper
 {

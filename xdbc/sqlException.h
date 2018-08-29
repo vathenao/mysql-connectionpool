@@ -1,11 +1,11 @@
 #ifndef __X_SQLEXCEPTION_H__
 #define __X_SQLEXCEPTION_H__
 
-#include "base/CoreException.h"
+#include "base/exception.h"
 
 __USING_WILLOW_NS
 
-class SQLException: public CoreException
+class SQLException: public CBaseException
 {
 public:
 	SQLException();

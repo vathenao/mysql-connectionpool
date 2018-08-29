@@ -3,7 +3,6 @@
 
 
 #include "x_prepareStatement.h"
-#include "base/pubfunc.h"
 #include <vector>
 
 class MysqlPrepareStatement:public xPrepareStatement

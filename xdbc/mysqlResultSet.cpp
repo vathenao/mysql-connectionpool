@@ -1,4 +1,4 @@
-#include "xdbc/mysqlResultSet.h"
+#include "mysqlResultSet.h"
 
 
 MysqlResultSet::MysqlResultSet(MYSQL_STMT* stmt):m_pStmt(stmt),m_pResMeta(NULL)

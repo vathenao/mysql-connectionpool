@@ -1,4 +1,4 @@
-#include "xdbc/xdbcWrapper.h"
+#include "xdbcWrapper.h"
 
 
 xStmtWrapper::xStmtWrapper(xPrepareStatement* pStmt, const string &runSql) DECL_THROW_EXCEPTION(SQLException):m_pStmt(pStmt), m_runSql(runSql)

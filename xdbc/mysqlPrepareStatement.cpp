@@ -1,5 +1,5 @@
-#include "xdbc/mysqlPrepareStatement.h"
-#include "xdbc/mysqlResultSet.h"
+#include "mysqlPrepareStatement.h"
+#include "mysqlResultSet.h"
 
 MysqlPrepareStatement::MysqlPrepareStatement(MYSQL *mysql, const string &sPerpareStr):m_pStmt(NULL),m_sPrepareStr(sPerpareStr),m_paramCount(0)
 {

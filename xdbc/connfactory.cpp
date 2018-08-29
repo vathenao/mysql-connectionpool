@@ -1,6 +1,6 @@
-#include "xdbc/connfactory.h"
-#include "xdbc/sqlException.h"
-#include "xdbc/mysqlConnection.h"
+#include "connfactory.h"
+#include "sqlException.h"
+#include "mysqlConnection.h"
 
 xConnection* CConnFactory::GetConn()
 {
