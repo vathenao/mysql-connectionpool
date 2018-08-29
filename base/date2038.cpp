@@ -130,6 +130,7 @@ mktime() no-longer zeros tm struct.
 
 */
 
+#include "stdafx.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -176,7 +177,7 @@ static struct tm *_gmtime64_r (const time_t * now, base_time64_t *_t, struct tm 
 	t /= 60;
 	v_tm_hour = ((base_time64_t) t % (base_time64_t) 24);
 	t /= 24;
-	v_tm_tday = t;
+	v_tm_tday = static_cast<int>(t);
 	WRAP (v_tm_sec, v_tm_min, 60);
 	WRAP (v_tm_min, v_tm_hour, 60);
 	WRAP (v_tm_hour, v_tm_tday, 24);

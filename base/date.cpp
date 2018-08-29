@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "date.h"
 #include "stringUtils.h"
 #include "BaseException.h"
@@ -441,7 +442,7 @@ bool Date::GetFromString(const string& strTime,const string& strFormat)
 
 	strFormat1 = StringUtils::toLowerCase(strFormat1) ;
 
-    for(long i=0;i<strFormat1.length();i++)
+    for(size_t i=0;i<strFormat1.length();i++)
     {
         char c=strFormat1.at(i);
 		
@@ -797,7 +798,7 @@ long Date::DifferentDays(long nDate1,long nDate2)
 {
     time_t t1=PackTime(nDate1,0L);
     time_t t2=PackTime(nDate2,0L);
-    return((t2-t1)/86400L);
+    return static_cast<long>((t2-t1)/86400L);
 }
 
 #undef inline

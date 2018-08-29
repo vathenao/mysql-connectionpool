@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "CoreException.h"
 
 __WILLOW_BEGIN_NAMESPACE
@@ -9,6 +10,7 @@ const char* CoreException::getClassName() const
 
 CoreException::~CoreException()throw()
 {
+
 }
 
 CoreException::CoreException()

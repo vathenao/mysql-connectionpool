@@ -69,6 +69,7 @@ const char digits[] = {
   'u' , 'v' , 'w' , 'x' , 'y' , 'z'
 };
 
+#define int_num (-2147483647-1)
 template <class _Tp> inline std::string number_to_str(_Tp n)
 {		
 	int bMinus = 0 ;
