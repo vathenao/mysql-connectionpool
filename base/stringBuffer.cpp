@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "stringBuffer.h"
 
 __USING_STL_NS

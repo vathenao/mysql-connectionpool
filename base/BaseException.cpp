@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "BaseException.h"
 
 __WILLOW_BEGIN_NAMESPACE

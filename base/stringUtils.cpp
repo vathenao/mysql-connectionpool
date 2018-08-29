@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "stringUtils.h"
 #include "stringBuffer.h"
 
