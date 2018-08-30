@@ -11,6 +11,7 @@
 
 #include <cstddef>
 #include <algorithm>
+#include <iterator>
 
 __WILLOW_BEGIN_NAMESPACE
 
