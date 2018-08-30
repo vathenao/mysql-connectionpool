@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "mysqlConnection.h"
 #include <base/configHelper.h>
 

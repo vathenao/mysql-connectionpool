@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "mysqlPrepareStatement.h"
 #include "mysqlResultSet.h"
 

@@ -6,6 +6,7 @@
 **version:			V1.0.1
 ****************************************/
 
+#include "stdafx.h"
 #include "mysqlConnection.h"
 #include "connpoolException.h"
 #include "connpool.h"
@@ -13,7 +14,9 @@
 #include <base/configHelper.h>
 #include <base/pubfunc.h>
 
+#ifndef WIN32
 #include <unistd.h>
+#endif // !WIN32
 
 __CONNPOOL_LOCK_BEGIN_NAMESPACE
 pthread_mutex_t ConnPoolLock = PTHREAD_MUTEX_INITIALIZER;
@@ -76,7 +79,11 @@ void ConnectionPool::GetConnection(xConnection **pConn, int timeout)
 			throw ConnpollException(errmsg);
 		}
 		
+#ifdef WIN32
+		Sleep(1000);
+#else
 		sleep(1);
+#endif // WIN32
 	}
 }
 
