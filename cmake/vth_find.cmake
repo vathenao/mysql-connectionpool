@@ -1,1 +1,5 @@
 FIND_PACKAGE(MySQL)
+
+if(WIN32)
+	FIND_PACKAGE(Pthread)
+endif()

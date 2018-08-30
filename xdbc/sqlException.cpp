@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "sqlException.h"
 
 const char SQLException::CLASS_NAME[] = "SQLException";

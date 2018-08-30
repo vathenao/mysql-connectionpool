@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "connpoolException.h"
 
 const char ConnpollException::CLASS_NAME[] = "ConnpollException";

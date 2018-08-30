@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "connfactory.h"
 #include "sqlException.h"
 #include "mysqlConnection.h"
