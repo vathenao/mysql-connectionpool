@@ -1,6 +1,7 @@
 include_directories(
 .
 ../inc
+${PTHREAD_INC_DIR}
 )
 
 AUX_SOURCE_DIRECTORY(. SRC_LIST)
