@@ -32,14 +32,14 @@ public:
 	**<P>index:the designated offset of markers(?) in the prepare statement.The first marker in the statement is offset 1. 
 	**<R>None
 	*/
-	void setInt(int index, const int &value);
+	void setInt(size_t index, const int &value);
 	
 	/*
 	**<D>: Binding input data for the parameter markers at specific position in the prepare statement with string.
 	**<P>index:the designated offset of markers(?) in the prepare statement.The first marker in the statement is offset 1. 
 	**<R>None
 	*/
-	void setString(int index, const string &paramValue);
+	void setString(size_t index, const string &paramValue);
 	
 	/*
 	**<D>: Binding input data for the parameter markers at specific position in the prepare statement with date.
@@ -50,14 +50,14 @@ public:
 	**Because of this, to bound a complete datatime-structure variable to a prepare statement, you should use the setDateTime function 
 	**instead of setDate fucntion.
 	*/
-	void setDate(int index, const Date &date);
+	void setDate(size_t index, const Date &date);
 	
 	/*
 	**<D>: Binding input data for the parameter markers at specific position in the prepare statement with datetime.
 	**<P>index:the designated offset of markers(?) in the prepare statement.The first marker in the statement is offset 1. 
 	**<R>None
 	*/
-	void setDateTime(int index, const Date &date);
+	void setDateTime(size_t index, const Date &date);
 	
 private:
 	
@@ -75,7 +75,7 @@ private:
 	MYSQL_STMT* m_pStmt;
 	MYSQL_BIND m_bind;	//The prepare Statement has no parameters that marks with '?', in which case m_bind use for parameter of mysql_stmt_param_bind(); 
 	vector<MYSQL_BIND> m_vecBind;	//vector that stores the MYSQL_BIND use for binding parameters.	
-	int m_paramCount;
+	size_t m_paramCount;
 	
 	MYSQL_BIND m_bindarray[1];
 };

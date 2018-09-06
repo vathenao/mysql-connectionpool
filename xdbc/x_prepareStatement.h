@@ -17,19 +17,19 @@ public:
 
 	//binding input data for the parameter markers at specific position 
 	//in the prepare statement with an integer.
-	virtual void setInt(int index, const int &value)=0;
+	virtual void setInt(size_t index, const int &value)=0;
 	
 	//binding input data for the parameter markers at specific position 
 	//in the prepare statement with a string.
-	virtual void setString(int index, const string &paramValue)=0;
+	virtual void setString(size_t index, const string &paramValue) = 0;
 	
 	//binding input data for the parameter markers at specific position 
 	//in the prepare statement with date.
-	virtual void setDate(int index, const Date &date)=0;
+	virtual void setDate(size_t index, const Date &date) = 0;
 	
 	//binding input data for the parameter markers at specific position 
 	//in the prepare statement with datetime.
-	virtual void setDateTime(int index, const Date &date)=0;
+	virtual void setDateTime(size_t index, const Date &date) = 0;
 };
 
 #endif
