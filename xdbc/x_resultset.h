@@ -25,7 +25,7 @@ public:
 	** Parameter: column index of current row , the first column is 1, the second is 2, ...
 	** Return£ºreturn the column value
 	*/
-	virtual char getByte(int index)=0;
+	virtual char getByte(size_t index) = 0;
 	
 	/*
 	** Description£ºreceives the value of the designated cloum in the current row 
@@ -33,7 +33,7 @@ public:
 	** Parameter: column index of current row , the first column is 1, the second is 2, ...
 	** Return£ºreturn the column value
 	*/
-	virtual short getShort(int index)=0;
+	virtual short getShort(size_t index) = 0;
 	
 	/*
 	** Description£ºreceives the value of the designated cloum in the current row 
@@ -41,7 +41,7 @@ public:
 	** Parameter: column index of current row , the first column is 1, the second is 2, ...
 	** Return£ºreturn the column value
 	*/
-	virtual int getInt(int index)=0;
+	virtual int getInt(size_t index) = 0;
 	
 	/*
 	** Description£ºreceives the value of the designated cloum in the current row 
@@ -49,7 +49,7 @@ public:
 	** Parameter: column index of current row , the first column is 1, the second is 2, ...
 	** Return£ºreturn the column value
 	*/
-	virtual long long getLong(int index)=0;
+	virtual long long getLong(size_t index) = 0;
 	
 	/*
 	** Description£ºreceives the value of the designated cloum in the current row 
@@ -57,7 +57,7 @@ public:
 	** Parameter: column index of current row , the first column is 1, the second is 2, ...
 	** Return£ºreturn the column value
 	*/
-	virtual float getFloat(int index)=0;
+	virtual float getFloat(size_t index) = 0;
 	
 	/*
 	** Description£ºreceives the value of the designated cloum in the current row 
@@ -65,7 +65,7 @@ public:
 	** Parameter: column index of current row , the first column is 1, the second is 2, ...
 	** Return£ºreturn the column value
 	*/
-	virtual double getDouble(int index)=0;
+	virtual double getDouble(size_t index) = 0;
 	
 	/*
 	** Description£ºreceives the value of the designated cloum in the current row 
@@ -73,7 +73,7 @@ public:
 	** Parameter: column index of current row , the first column is 1, the second is 2, ...
 	** Return£ºreturn the column value
 	*/
-	virtual string getString(int index)=0;
+	virtual string getString(size_t index) = 0;
 	
 	/*
 	** Description£ºreceives the value of the designated cloum in the current row 
@@ -81,7 +81,7 @@ public:
 	** Parameter: column index of current row , the first column is 1, the second is 2, ...
 	** Return£ºreturn the column value
 	*/
-	virtual string getBlob(int index)=0;
+	virtual string getBlob(size_t index) = 0;
 	
 	/*
 	** Description£ºreceives the value of the designated cloum in the current row 
@@ -89,7 +89,7 @@ public:
 	** Parameter: column index of current row , the first column is 1, the second is 2, ...
 	** Return£ºreturn the column value
 	*/
-	virtual Date getDate(int index)=0;
+	virtual Date getDate(size_t index) = 0;
 	
 	/*
 	** Description£ºreceives the value of the designated cloum in the current row 
@@ -97,7 +97,7 @@ public:
 	** Parameter: column index of current row , the first column is 1, the second is 2, ...
 	** Return£ºreturn the column value
 	*/
-	virtual Date getTime(int index)=0;
+	virtual Date getTime(size_t index) = 0;
 	
 	/*
 	** Description£ºreceives the value of the designated cloum in the current row 
@@ -105,7 +105,7 @@ public:
 	** Parameter: column index of current row , the first column is 1, the second is 2, ...
 	** Return£ºreturn the column value
 	*/
-	virtual Date getDateTime(int index)=0;
+	virtual Date getDateTime(size_t index) = 0;
 	
 	/*
 	** Description£ºreceives the value of the designated cloum in the current row 

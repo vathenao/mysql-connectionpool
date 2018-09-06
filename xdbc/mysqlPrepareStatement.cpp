@@ -172,9 +172,9 @@ void MysqlPrepareStatement::prepareStatement()
 **<R>:None
 **remark:The index paramter indexe from 1
 */
-void MysqlPrepareStatement::setInt(int index, const int &value)
+void MysqlPrepareStatement::setInt(size_t index, const int &value)
 {
-	if( index <= 0 || index > m_paramCount )
+	if( index == 0 || index > m_paramCount )
 	{
 		char errmsg[65];
 		snprintf(errmsg, 64, "Index[%d] of binding param is out of range,not in range(1~%d)", index, m_paramCount);
@@ -199,9 +199,9 @@ void MysqlPrepareStatement::setInt(int index, const int &value)
 **<R>:None
 **remark:The index paramter indexe from 1
 */
-void MysqlPrepareStatement::setString(int index, const string &value)
+void MysqlPrepareStatement::setString(size_t index, const string &value)
 {
-	if( index <= 0 || index > m_paramCount )
+	if( index == 0 || index > m_paramCount )
 	{
 		char errmsg[65];
 		snprintf(errmsg, 64, "Index[%d] of binding param is out of range,not in range(1~%d)", 
@@ -221,9 +221,9 @@ void MysqlPrepareStatement::setString(int index, const string &value)
 	m_vecBind.push_back(bind);
 }
 
-void MysqlPrepareStatement::setDate(int index, const Date &date)
+void MysqlPrepareStatement::setDate(size_t index, const Date &date)
 {	
-	if( index <= 0 || index > m_paramCount )
+	if( index == 0 || index > m_paramCount )
 	{
 		char errmsg[65];
 		snprintf(errmsg, 64, "Index[%d] of binding param is out of range,not in range(1~%d)", 
@@ -250,9 +250,9 @@ void MysqlPrepareStatement::setDate(int index, const Date &date)
 	
 }
 
-void MysqlPrepareStatement::setDateTime(int index, const Date &date)
+void MysqlPrepareStatement::setDateTime(size_t index, const Date &date)
 {	
-	if( index <= 0 || index > m_paramCount )
+	if( index == 0 || index > m_paramCount )
 	{
 		char errmsg[65];
 		snprintf(errmsg, 64, "Index[%d] of binding param is out of range,not in range(1~%d)", 

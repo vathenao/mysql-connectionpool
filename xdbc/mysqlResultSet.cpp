@@ -58,9 +58,9 @@ bool MysqlResultSet::next() DECL_THROW_EXCEPTION(SQLException)
 	throw SQLException(errormsg);
 }
 
-char MysqlResultSet::getByte(int index)
+char MysqlResultSet::getByte(size_t index)
 {
-	if( index <= 0 || index > m_vecBind.size() )
+	if( index == 0 || index > m_vecBind.size() )
 	{
 		char errmsg[129];
 		snprintf(errmsg, 128, "getInt: Index[%d] of binding param is out of range, not in range(1~%d)", 
@@ -78,19 +78,19 @@ char MysqlResultSet::getByte(int index)
 	return ch;
 }
 
-short MysqlResultSet::getShort(int index)
+short MysqlResultSet::getShort(size_t index)
 {
-	return getLong(index);
+	return static_cast<short>(getLong(index));
 }
 
-int MysqlResultSet::getInt(int index)
+int MysqlResultSet::getInt(size_t index)
 {
-	return getLong(index);
+	return static_cast<int>(getLong(index));
 }
 
-LONG_LONG MysqlResultSet::getLong(int index)
+LONG_LONG MysqlResultSet::getLong(size_t index)
 {
-	if( index <= 0 || index > m_vecBind.size() )
+	if( index == 0 || index > m_vecBind.size() )
 	{
 		char errmsg[129];
 		snprintf(errmsg, 128, "getInt: Index[%d] of binding param is out of range, not in range(1~%d)", 
@@ -106,14 +106,14 @@ LONG_LONG MysqlResultSet::getLong(int index)
 	return *(int *)m_vecBind[index-1].buffer;
 }
 
-float MysqlResultSet::getFloat(int index)
+float MysqlResultSet::getFloat(size_t index)
 {
-	return getDouble(index);
+	return static_cast<short>(getDouble(index));
 }
 
-double MysqlResultSet::getDouble(int index)
+double MysqlResultSet::getDouble(size_t index)
 {
-	if( index <= 0 || index > m_vecBind.size() )
+	if( index == 0 || index > m_vecBind.size() )
 	{
 		char errmsg[129];
 		snprintf(errmsg, 128, "getInt: Index[%d] of binding param is out of range, not in range(1~%d)", 
@@ -131,9 +131,9 @@ double MysqlResultSet::getDouble(int index)
 
 //The first column is numbered 1,offset is the offset within the data value at which to begin retrieving data
 //The beginning of the value is offset 1.
-string MysqlResultSet::getString(int index)
+string MysqlResultSet::getString(size_t index)
 {
-	if( index <= 0 || index > m_vecBind.size() )
+	if( index == 0 || index > m_vecBind.size() )
 	{
 		char errmsg[129];
 		snprintf(errmsg, 128, "getString: Index[%d] of binding param is out of range,not in range(0~%d)", 
@@ -151,12 +151,12 @@ string MysqlResultSet::getString(int index)
 	return str;
 }
 
-string MysqlResultSet::getBlob(int index)
+string MysqlResultSet::getBlob(size_t index)
 {
 	return getString(index);
 }
 
-Date MysqlResultSet::getDate(int index)
+Date MysqlResultSet::getDate(size_t index)
 {
 	Date date = getDateTime(index);
 	date.setHours(0);
@@ -165,14 +165,14 @@ Date MysqlResultSet::getDate(int index)
 	return date;
 }
 
-Date MysqlResultSet::getTime(int index)
+Date MysqlResultSet::getTime(size_t index)
 {
 	return Date(1990,01,01,00,00,00);
 }
 
-Date MysqlResultSet::getDateTime(int index)
+Date MysqlResultSet::getDateTime(size_t index)
 {
-	if( index <= 0 || index > m_vecBind.size() )
+	if( index == 0 || index > m_vecBind.size() )
 	{
 		char errmsg[129];
 		snprintf(errmsg, 128, "getString: Index[%d] of binding param is out of range,not in range(0~%d)", 

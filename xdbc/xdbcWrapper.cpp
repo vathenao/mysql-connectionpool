@@ -83,57 +83,57 @@ bool xRsWrapper::next() DECL_THROW_EXCEPTION(SQLException)
 	return m_rs->next();
 }
 
-char xRsWrapper::getByte(int index)
+char xRsWrapper::getByte(size_t index)
 {
 	return m_rs->getByte(index);
 }
 
-short xRsWrapper::getShort(int index)
+short xRsWrapper::getShort(size_t index)
 {
 	return m_rs->getShort(index);
 }
 
-int xRsWrapper::getInt(int index)
+int xRsWrapper::getInt(size_t index)
 {
 	return m_rs->getInt(index);
 }
 
-LONG_LONG xRsWrapper::getLong(int index)
+LONG_LONG xRsWrapper::getLong(size_t index)
 {
 	return m_rs->getLong(index);
 }
 
-float xRsWrapper::getFloat(int index)
+float xRsWrapper::getFloat(size_t index)
 {
 	return m_rs->getFloat(index);
 }
 
-double xRsWrapper::getDouble(int index)
+double xRsWrapper::getDouble(size_t index)
 {
 	return m_rs->getDouble(index);
 }
 
-string xRsWrapper::getString(int index)
+string xRsWrapper::getString(size_t index)
 {
 	return m_rs->getString(index);
 }
 
-string xRsWrapper::getBlob(int index)
+string xRsWrapper::getBlob(size_t index)
 {
 	return m_rs->getBlob(index);
 }
 
-Date xRsWrapper::getDate(int index)
+Date xRsWrapper::getDate(size_t index)
 {
 	return m_rs->getDate(index);
 }
 
-Date xRsWrapper::getTime(int index)
+Date xRsWrapper::getTime(size_t index)
 {
 	return m_rs->getTime(index);
 }
 
-Date xRsWrapper::getDateTime(int index)
+Date xRsWrapper::getDateTime(size_t index)
 {
 	return m_rs->getDateTime(index);
 }

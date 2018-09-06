@@ -39,17 +39,17 @@ public:
 	
 	void ReSet(xResultSet * rs = NULL);
 	bool next() DECL_THROW_EXCEPTION(SQLException);
-	char getByte(int index);
-	short getShort(int index);
-	int getInt(int index);
-	LONG_LONG getLong(int index);
-	float getFloat(int index);
-	double getDouble(int index);
-	string getString(int index);
-	string getBlob(int index);
-	Date getDate(int index);
-	Date getTime(int index);
-	Date getDateTime(int index);
+	char getByte(size_t index);
+	short getShort(size_t index);
+	int getInt(size_t index);
+	LONG_LONG getLong(size_t index);
+	float getFloat(size_t index);
+	double getDouble(size_t index);
+	string getString(size_t index);
+	string getBlob(size_t index);
+	Date getDate(size_t index);
+	Date getTime(size_t index);
+	Date getDateTime(size_t index);
 	
 private:
 	xResultSet *m_rs;
