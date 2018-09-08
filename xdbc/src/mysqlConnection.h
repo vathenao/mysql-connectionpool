@@ -3,8 +3,8 @@
 
 #include <mysql.h>
 #include "x_connection.h"
-#include "mysqlPrepareStatement.h"
 
+class MysqlPrepareStatement;
 class MysqlConnection : public xConnection
 {
 public:

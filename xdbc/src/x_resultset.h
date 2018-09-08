@@ -5,7 +5,6 @@
 #include <base/date.h>
 #include "sqlException.h"
 
-
 class xResultSet
 {
 public:

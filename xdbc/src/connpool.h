@@ -3,7 +3,6 @@
 
 #include "x_connection.h"
 #include <pthread.h>
-#include <list>
 
 #define __CONNPOOL_LOCK_HAS_NAMESPACES
 

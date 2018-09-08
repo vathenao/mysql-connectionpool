@@ -1,10 +1,12 @@
 #ifndef __DB_CONNECT_H__
 #define __DB_CONNECT_H__
 
-#include "libxdbc.h"
+#include "xdbcWrapper.h"
+#include "connpoolException.h"
 
 #define TIMEOUT 5
 
+class xConnection;
 class DbConnect
 {
 public:

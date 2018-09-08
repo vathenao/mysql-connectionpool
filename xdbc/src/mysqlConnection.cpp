@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "mysqlConnection.h"
+#include "mysqlPrepareStatement.h"
 #include <base/configHelper.h>
 
 MysqlConnection::MysqlConnection() DECL_THROW_EXCEPTION(SQLException):m_pPreStmt(NULL)

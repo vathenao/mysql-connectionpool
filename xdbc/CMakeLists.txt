@@ -34,7 +34,6 @@ vth_add_sources(
 	src/x_resultset.h
 	src/x_statement.h
 	src/xdbc.conf
-	src/xdbcconfig.h
 	src/xdbcdefs.h
 	src/xdbcWrapper.cpp
 	src/xdbcWrapper.h

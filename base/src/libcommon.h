@@ -19,6 +19,7 @@
 #include <setjmp.h>
 #include <exception>
 #include <iostream>
+#include <list>
 
 #include "libmarco.incl"
 

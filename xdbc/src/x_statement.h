@@ -3,7 +3,7 @@
 
 #include <mysql.h>
 #include "sqlException.h"
-#include "x_resultset.h"
+
 __USING_WILLOW_NS
 
 /*
@@ -12,6 +12,7 @@ __USING_WILLOW_NS
 * In general,functions you add to this class should be pure virtual functions.
 *
 */
+class xResultSet;
 class xStatement
 {
 public:
