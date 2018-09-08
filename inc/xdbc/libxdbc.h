@@ -1,1 +1,1 @@
-#include "../../xdbc/inc/libxdbc.h"
+#include "../../xdbc/src/libxdbc.h"

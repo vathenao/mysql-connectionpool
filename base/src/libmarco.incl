@@ -1,0 +1,89 @@
+//-------------------------------------------------------------------------
+// MARCO  FOR CONVENIENCE
+//-------------------------------------------------------------------------
+#define __USING_STL_NS  using namespace std;
+#define __STL_NS std
+//-------------------------------------------------------------------------
+// MARCO  FOR NATIVE CODE MODIFIER 
+//-------------------------------------------------------------------------
+#define __WM_NATIVE_DECL
+//-------------------------------------------------------------------------
+// MARCO  FOR LONG_LONG SUPPORT 
+//-------------------------------------------------------------------------
+#if defined(LONG_LONG_IS_LONG)
+#  define LONG_LONG   long 
+#  define ULONG_LONG  unsigned long
+#else
+#  define LONG_LONG   long long
+#  define ULONG_LONG  unsigned long long
+#endif
+//-------------------------------------------------------------------------
+// MARCO  FOR INTERLOCKED SUPPORT 
+//-------------------------------------------------------------------------
+#if defined(__WM_WORD_64)
+#  define INTERLOCKED_INT32 int
+#  define INTERLOCKED_INT64 LONG_LONG
+#else
+#  define INTERLOCKED_INT32 long
+#  define INTERLOCKED_INT64 LONG_LONG
+#endif
+//-------------------------------------------------------------------------
+// MARCO  FOR MEMORY ADDRESS 
+//-------------------------------------------------------------------------
+#if defined(__WM_WORD_64)
+#  define WILLOW_ADDR_TYPE unsigned long
+#else
+#  define WILLOW_ADDR_TYPE unsigned int
+#endif
+
+#define WILLOW_OFFSET_TYPE WILLOW_ADDR_TYPE
+
+//addedbyyxb 2006-06-02
+//[开始]:
+//因为VC不知道，在函数定义中抛出异常
+#if defined(WIN32)
+#  define DECL_THROW_EXCEPTION(exception)
+#else
+#  define DECL_THROW_EXCEPTION(exception) throw(exception)
+#endif
+
+#define OUT 
+#define IN 
+
+//启动静态断言 （如果不定义此宏则静态断言无效）
+#define STATIC_ASSERT_ON
+
+//---------------------------------------------
+/*                    静态断言               */
+//---------------------------------------------
+#ifndef base_static_assert
+#   if defined(STATIC_ASSERT_ON) || defined(WIN32)
+
+namespace baselib 
+{
+    namespace { class ERROR_Assertion_Failed { } Error_Assertion_Failed; }
+
+    template <bool>
+    struct CompileAsserter {  };
+
+    template <>
+    struct CompileAsserter<true> { CompileAsserter(...); };
+}
+
+#       define base_static_assert(expression)   \
+    sizeof(baselib::CompileAsserter<(expression)>(baselib::Error_Assertion_Failed));
+#   else
+#       define base_static_assert(expression)   
+#   endif
+#endif
+
+
+
+//--------------------------------------------------------------------------
+
+//-----------------------------------
+#ifdef WIN32
+    #ifndef __func__
+        #define __func__ __FUNCTION__
+    #endif
+#endif
