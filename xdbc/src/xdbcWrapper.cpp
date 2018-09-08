@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "xdbcWrapper.h"
-
+#include "x_resultset.h"
+#include "x_prepareStatement.h"
 
 xStmtWrapper::xStmtWrapper(xPrepareStatement* pStmt, const string &runSql) DECL_THROW_EXCEPTION(SQLException):m_pStmt(pStmt), m_runSql(runSql)
 {

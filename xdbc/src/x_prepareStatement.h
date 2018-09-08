@@ -3,6 +3,7 @@
 
 #include "x_statement.h"
 
+class Date;
 class xPrepareStatement : public xStatement
 {
 public:

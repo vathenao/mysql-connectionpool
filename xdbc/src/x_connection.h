@@ -1,14 +1,14 @@
 #ifndef __X_CONNECTION_H__
 #define __X_CONNECTION_H__
 
-#include "xdbcconfig.h"
 #include "xdbcdefs.h"
-#include "x_prepareStatement.h"
+#include "sqlException.h"
 
 #ifndef CONFIG_FILE_NAME
 #define CONFIG_FILE_NAME "/home/vathena/common/inc/xdbc/xdbc.conf"
 #endif
 
+class xPrepareStatement;
 class xConnection
 {
 public:

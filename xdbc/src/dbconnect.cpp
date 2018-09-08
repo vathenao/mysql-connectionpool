@@ -1,5 +1,8 @@
 #include "stdafx.h"
 #include "dbconnect.h"
+#include "connpool.h"
+#include "x_prepareStatement.h"
+#include "x_resultset.h"
 
 DbConnect::DbConnect()
 {
