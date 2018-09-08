@@ -2,7 +2,6 @@
 #define __MYSQL_RESULTSET_H__
 
 #include "x_resultset.h"
-#include <vector>
 
 #define VTH_MAX_FEILD 200
 #define VTH_MAX_CHAR_SIZE 513

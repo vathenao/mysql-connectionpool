@@ -20,6 +20,7 @@
 #include <exception>
 #include <iostream>
 #include <list>
+#include <vector>
 
 #include "libmarco.incl"
 
