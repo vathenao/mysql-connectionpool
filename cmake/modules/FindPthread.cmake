@@ -59,7 +59,7 @@ FIND_LIBRARY(PTHREAD_LIB_DIR
 
 #find pthread.h
 SET(_INC_FALLBACK_PATH
-		${PTHREAD_CMAKE_DIR}/../../pthread/*/include
+		${PTHREAD_CMAKE_DIR}/../../support/pthread/*/include
     $ENV{ProgramFiles}/*pthread*/*/include
     $ENV{SystemDrive}/*pthread*/*/include
 )
