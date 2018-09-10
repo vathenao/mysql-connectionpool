@@ -43,10 +43,23 @@ ConnectionPool* ConnectionPool::GetInstance()
 	pthread_mutex_lock(&__CONNPOOL_LOCK_NAMESPACE::ConnPoolLock);
 	if( !connpool )
 	{
-		//cout << "sleep thread:" << pthread_self() << endl;
 		try
 		{
 			connpool = new ConnectionPool();
+		}
+		catch (SQLException ex)	//catch the exception here because of the lock has to be released
+		{
+			string errmsg = "ConnectionPool::GetInstance fail,";
+			errmsg.append(ex.getMessage());
+			pthread_mutex_unlock(&__CONNPOOL_LOCK_NAMESPACE::ConnPoolLock);
+			throw SQLException(errmsg);
+		}
+		catch (exception ex)
+		{
+			string errmsg = "ConnectionPool::GetInstance fail,";
+			errmsg.append(ex.what());
+			pthread_mutex_unlock(&__CONNPOOL_LOCK_NAMESPACE::ConnPoolLock);
+			throw SQLException(errmsg);
 		}
 		catch(...)
 		{
@@ -89,7 +102,6 @@ void ConnectionPool::GetConnection(xConnection **pConn, int timeout)
 
 void ConnectionPool::GetConn(xConnection **pConn)
 {
-	//cout << "GetConnection£¬current thread:" << pthread_self() << endl;
 	*pConn = NULL;
 	pthread_mutex_lock(&m_lock);
 	
