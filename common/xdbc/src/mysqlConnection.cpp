@@ -72,6 +72,8 @@ void MysqlConnection::LoadConnectionInfo(const string &fileName)
 		}
 		else
 		{
+			string defaultFileName = "./";
+			defaultFileName.append(CONFIG_FILE_NAME);
 			configHelper.ReLoad(CONFIG_FILE_NAME);
 		}
 		

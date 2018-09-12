@@ -33,7 +33,6 @@ vth_add_sources(
 	src/x_prepareStatement.h
 	src/x_resultset.h
 	src/x_statement.h
-	src/xdbc.conf
 	src/xdbcdefs.h
 	src/xdbcWrapper.cpp
 	src/xdbcWrapper.h
@@ -46,4 +45,5 @@ vth_add_sources(
 	src/dbconnect.cpp
 )
 
+configure_file(./src/xdbc.cfg ${VTH_COMMON_PATH}/xdbc/cfg/xdbc.cfg)
 vth_add_library(xdbc STATIC ${VTH_COMMON_PATH}/xdbc)
