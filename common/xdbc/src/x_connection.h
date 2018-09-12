@@ -5,7 +5,7 @@
 #include "sqlException.h"
 
 #ifndef CONFIG_FILE_NAME
-#define CONFIG_FILE_NAME "/home/vathena/common/inc/xdbc/xdbc.conf"
+#define CONFIG_FILE_NAME "xdbc.cfg"
 #endif
 
 class xPrepareStatement;
