@@ -45,5 +45,5 @@ vth_add_sources(
 	src/dbconnect.cpp
 )
 
-configure_file(./src/xdbc.cfg ${VTH_COMMON_PATH}/xdbc/cfg/xdbc.cfg)
+configure_file(./src/xdbc.cfg ${VTH_COMMON_PATH}/xdbc/cfgs/xdbc.cfg)
 vth_add_library(xdbc STATIC ${VTH_COMMON_PATH}/xdbc)
