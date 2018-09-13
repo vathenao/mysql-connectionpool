@@ -1,12 +1,8 @@
 #ifndef __X_CONNECTION_H__
 #define __X_CONNECTION_H__
 
-#include "xdbcdefs.h"
+#include "global.h"
 #include "sqlException.h"
-
-#ifndef CONFIG_FILE_NAME
-#define CONFIG_FILE_NAME "xdbc.cfg"
-#endif
 
 class xPrepareStatement;
 class xConnection

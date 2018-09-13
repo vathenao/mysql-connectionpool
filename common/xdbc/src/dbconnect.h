@@ -4,8 +4,6 @@
 #include "xdbcWrapper.h"
 #include "connpoolException.h"
 
-#define TIMEOUT 5
-
 class xConnection;
 class DbConnect
 {

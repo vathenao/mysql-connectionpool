@@ -18,6 +18,18 @@
 #include <unistd.h>
 #endif // !WIN32
 
+#define __CONNPOOL_LOCK_HAS_NAMESPACES
+
+# if defined(__CONNPOOL_LOCK_HAS_NAMESPACES) && !defined(__CONNPOOL_LOCK_NO_NAMESPACES)
+#   define __CONNPOOL_LOCK_BEGIN_NAMESPACE namespace connpoollocklib {
+#   define __CONNPOOL_LOCK_END_NAMESPACE }
+#	define __CONNPOOL_LOCK_NAMESPACE connpoollocklib
+# else
+#   define __CONNPOOL_LOCK_BEGIN_NAMESPACE
+#   define __CONNPOOL_LOCK_END_NAMESPACE
+#	define __CONNPOOL_LOCK_NAMESPACE
+# endif
+
 __CONNPOOL_LOCK_BEGIN_NAMESPACE
 pthread_mutex_t ConnPoolLock = PTHREAD_MUTEX_INITIALIZER;
 __CONNPOOL_LOCK_END_NAMESPACE
@@ -220,7 +232,10 @@ void ConnectionPool::LoadConfig(const string &fileName)
 		}
 		else
 		{
-			configHelper.ReLoad(CONFIG_FILE_NAME);
+			string defaultFileName;
+			defaultFileName.append(XDBC_CFG_PATH);
+			defaultFileName.append("/xdbc.cfg");
+			configHelper.ReLoad(defaultFileName);
 		}
 		
 		if( !configHelper.GetConfigStringValue("ConnInfo", "HOST", m_host) )

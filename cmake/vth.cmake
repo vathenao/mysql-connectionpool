@@ -175,6 +175,10 @@ macro(vth_add_definitions)
 	ADD_DEFINITIONS(${ARGN})
 endmacro()
 
+macro(vth_add_resource input output)
+configure_file(${input} ${output})
+endmacro()
+
 macro(vth_add_library name type outputdir)
 ADD_LIBRARY(${name} ${type} ${SOURCE_FILES})
 _output_location(${name} ${type} ${outputdir})
