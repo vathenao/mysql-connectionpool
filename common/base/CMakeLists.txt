@@ -38,4 +38,4 @@ vth_add_sources(
 	src/stringUtils.h
 )
 
-vth_add_library(base STATIC ${VTH_COMMON_PATH}/base)
+vth_add_library(base STATIC ${VTH_COMMON_TARGET_PATH}/base)

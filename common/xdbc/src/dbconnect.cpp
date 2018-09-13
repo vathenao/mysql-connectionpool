@@ -4,6 +4,8 @@
 #include "x_prepareStatement.h"
 #include "x_resultset.h"
 
+#define TIMEOUT 0
+
 DbConnect::DbConnect()
 {
 	ConnectionPool::GetInstance()->GetConnection(&m_pConn,TIMEOUT);

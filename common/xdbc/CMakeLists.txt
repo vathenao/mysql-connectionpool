@@ -1,3 +1,5 @@
+SET(XDBC_CFG_PATH ${VTH_COMMON_TARGET_PATH}/xdbc/cfgs)
+
 vth_add_definitions(
 	-DUNICODE
 	-D_UNICODE
@@ -13,12 +15,13 @@ vth_include_directories(
 ./src
 ../inc
 ${PTHREAD_INC_DIR}
+${CMAKE_CURRENT_BINARY_DIR}/inc
 )
 
 vth_add_sources(
 	stdafx.cpp 
 	stdafx.h
-
+	
 	src/dbconnect.h
 	src/libxdbc.h
 	src/mysqlConnection.cpp
@@ -33,7 +36,6 @@ vth_add_sources(
 	src/x_prepareStatement.h
 	src/x_resultset.h
 	src/x_statement.h
-	src/xdbcdefs.h
 	src/xdbcWrapper.cpp
 	src/xdbcWrapper.h
 	src/connfactory.cpp
@@ -43,7 +45,10 @@ vth_add_sources(
 	src/connpoolException.cpp
 	src/connpoolException.h
 	src/dbconnect.cpp
+	
+	src/global.h.in
 )
 
-configure_file(./src/xdbc.cfg ${VTH_COMMON_PATH}/xdbc/cfgs/xdbc.cfg)
-vth_add_library(xdbc STATIC ${VTH_COMMON_PATH}/xdbc)
+vth_add_resource(./src/xdbc.cfg ${XDBC_CFG_PATH}/xdbc.cfg)
+vth_add_resource(./src/global.h.in ${CMAKE_CURRENT_BINARY_DIR}/inc/global.h)
+vth_add_library(xdbc STATIC ${VTH_COMMON_TARGET_PATH}/xdbc)

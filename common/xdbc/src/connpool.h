@@ -4,18 +4,6 @@
 #include "x_connection.h"
 #include <pthread.h>
 
-#define __CONNPOOL_LOCK_HAS_NAMESPACES
-
-# if defined(__CONNPOOL_LOCK_HAS_NAMESPACES) && !defined(__CONNPOOL_LOCK_NO_NAMESPACES)
-#   define __CONNPOOL_LOCK_BEGIN_NAMESPACE namespace connpoollocklib {
-#   define __CONNPOOL_LOCK_END_NAMESPACE }
-#	define __CONNPOOL_LOCK_NAMESPACE connpoollocklib
-# else
-#   define __CONNPOOL_LOCK_BEGIN_NAMESPACE
-#   define __CONNPOOL_LOCK_END_NAMESPACE
-#	define __CONNPOOL_LOCK_NAMESPACE
-# endif
-
 /*
 #define SUCCESS 0
 #define FAILURE 1

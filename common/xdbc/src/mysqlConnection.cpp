@@ -62,7 +62,7 @@ void MysqlConnection::Commit()
 
 
 void MysqlConnection::LoadConnectionInfo(const string &fileName)
-{		
+{
 	try
 	{
 		VConfigHelper configHelper;
@@ -72,9 +72,10 @@ void MysqlConnection::LoadConnectionInfo(const string &fileName)
 		}
 		else
 		{
-			string defaultFileName = "./cfgs/";
-			defaultFileName.append(CONFIG_FILE_NAME);
-			configHelper.ReLoad(CONFIG_FILE_NAME);
+			string defaultFileName;
+			defaultFileName.append(XDBC_CFG_PATH);
+			defaultFileName.append("/xdbc.cfg");
+			configHelper.ReLoad(defaultFileName);
 		}
 		
 		if( !configHelper.GetConfigStringValue("ConnInfo", "HOST", m_host) )
