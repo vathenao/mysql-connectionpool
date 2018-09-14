@@ -23,7 +23,7 @@ public:
 	Date getDateTime(size_t index);
 
 private:
-	void BindResultSet(vector<MYSQL_BIND> &vecBind);
+	void BindResultSet();
 	void ReleaseVecBind();
 	void ReleaseVecIsNull();
 	

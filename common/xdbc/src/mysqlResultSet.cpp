@@ -3,7 +3,7 @@
 
 MysqlResultSet::MysqlResultSet(MYSQL_STMT* stmt):m_pStmt(stmt),m_pResMeta(NULL)
 {
-	BindResultSet(m_vecBind);
+	BindResultSet();
 }
 
 MysqlResultSet::~MysqlResultSet()
@@ -183,7 +183,7 @@ Date MysqlResultSet::getDateTime(size_t index)
 	return Date(ts->year, ts->month, ts->day, ts->hour, ts->minute, ts->second);
 }
 
-void MysqlResultSet::BindResultSet(vector<MYSQL_BIND> &vecBind)
+void MysqlResultSet::BindResultSet()
 {
 	ReleaseVecBind();
 	ReleaseVecIsNull();
@@ -277,7 +277,7 @@ void MysqlResultSet::BindResultSet(vector<MYSQL_BIND> &vecBind)
 
 void MysqlResultSet::ReleaseVecBind()
 {
-	for (size_t i = 1; i < m_vecBind.size(); i++)
+	for (size_t i = 0; i < m_vecBind.size(); i++)
 	{
 		if (m_vecBind[i].buffer)
 		{
