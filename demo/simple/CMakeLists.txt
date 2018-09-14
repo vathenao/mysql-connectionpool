@@ -15,9 +15,7 @@ vth_include_directories(
 )
 
 vth_link_directories(
-	${VTH_COMMON_TARGET_PATH}/base
 	${VTH_COMMON_TARGET_PATH}/xdbc
-	${MYSQL_LIB_DIR}
 )
 
 SET(PCH stdafx.cpp stdafx.h)
@@ -30,6 +28,4 @@ vth_add_sources(
 vth_add_executable(simple ${VTH_COMMON_TARGET_PATH}/demo)
 vth_add_packages(
 	xdbc
-	base
-	mysqlclient
 )

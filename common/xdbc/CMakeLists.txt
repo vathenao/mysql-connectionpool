@@ -20,7 +20,6 @@ ${CMAKE_CURRENT_BINARY_DIR}/inc
 
 vth_link_directories(
 	${VTH_COMMON_TARGET_PATH}/base
-	${VTH_COMMON_TARGET_PATH}/xdbc
 	${PTHREAD_LIB_DIR}
 )
 
