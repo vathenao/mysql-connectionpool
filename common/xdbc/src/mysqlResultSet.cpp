@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "mysqlResultSet.h"
 
+#define XDBC_MAXCHAR_OF_FIELD 1024
 
 MysqlResultSet::MysqlResultSet(MYSQL_STMT* stmt):m_pStmt(stmt),m_pResMeta(NULL)
 {
@@ -9,14 +10,8 @@ MysqlResultSet::MysqlResultSet(MYSQL_STMT* stmt):m_pStmt(stmt),m_pResMeta(NULL)
 
 MysqlResultSet::~MysqlResultSet()
 {	
-	for( size_t i = 1; i < m_vecBind.size(); i++ )
-	{
-		if( m_vecBind[i].buffer )
-		{
-			free(m_vecBind[i].buffer);
-			m_vecBind[i].buffer = NULL;
-		}
-	}
+	ReleaseVecBind();
+	ReleaseVecIsNull();
 	
 	//free the prepared result metadata
 	if( m_pResMeta )
@@ -49,7 +44,7 @@ bool MysqlResultSet::next() DECL_THROW_EXCEPTION(SQLException)
 	else if(MYSQL_DATA_TRUNCATED == iRet)
 	{
 		char errmsg[256];
-		snprintf(errmsg, 250, "MYSQL_DATA_TRUNCATED!");
+		snprintf(errmsg, 250, "MYSQL_DATA_TRUNCATED");
 		throw SQLException(errmsg);
 	}
 	
@@ -68,7 +63,7 @@ char MysqlResultSet::getByte(size_t index)
 		throw SQLException(errmsg);
 	}
 	
-	if( is_null[index-1] )
+	if (m_vecIsNull[index - 1])
 	{
 		return 0;
 	}
@@ -98,7 +93,7 @@ LONG_LONG MysqlResultSet::getLong(size_t index)
 		throw SQLException(errmsg);
 	}
 	
-	if( is_null[index-1] )
+	if (m_vecIsNull[index - 1])
 	{
 		return 0;
 	}
@@ -121,7 +116,7 @@ double MysqlResultSet::getDouble(size_t index)
 		throw SQLException(errmsg);
 	}
 	
-	if( is_null[index-1] )
+	if (m_vecIsNull[index - 1])
 	{
 		return 0;
 	}
@@ -141,7 +136,7 @@ string MysqlResultSet::getString(size_t index)
 		throw SQLException(errmsg);
 	}
 	
-	if( is_null[index-1] )
+	if (m_vecIsNull[index - 1])
 	{
 		cout << "clumn is null" << endl;
 		return 0;
@@ -180,7 +175,7 @@ Date MysqlResultSet::getDateTime(size_t index)
 		throw SQLException(errmsg);
 	}
 	
-	if( is_null[index-1] )
+	if (m_vecIsNull[index - 1])
 	{
 		cout << "clumn is null" << endl;
 		return 0;
@@ -192,21 +187,22 @@ Date MysqlResultSet::getDateTime(size_t index)
 
 void MysqlResultSet::BindResultSet(vector<MYSQL_BIND> &vecBind)
 {
-	vecBind.clear();
+	ReleaseVecBind();
+	ReleaseVecIsNull();
+
 	m_pResMeta = mysql_stmt_result_metadata(m_pStmt);
-	if( !m_pResMeta )
+	if (!m_pResMeta)
 	{
-		string errmsg="The results return by MYSQL is NULL,if the query string you had given is a SQL statement of UPDATE,DELETE,"
-		"or any other without result set memadate, please try to use the executeUpdate method for preforming it.";
+		string errmsg = "The results return by MYSQL is NULL,if the query string you had given is a SQL statement of UPDATE,DELETE,"
+			"or any other without result set memadate, please try to use the executeUpdate method for preforming it.";
 		throw SQLException(errmsg);
 	}
-	
-	if( mysql_num_fields(m_pResMeta) > VTH_MAX_FEILD )
+
+	unsigned int fieldNum = mysql_num_fields(m_pResMeta);
+	for (size_t i = 0; i < fieldNum; i++)
 	{
-		char errmsg[512];
-		snprintf(errmsg, 500, "The number of columns in a result set is too large(large clumns is %d)."
-		"You have to increase the value of VTH_MAX_FEILD", VTH_MAX_FEILD);
-		throw SQLException(errmsg);
+		my_bool item;
+		m_vecIsNull.push_back(item);
 	}
 	
 	int index = 0;
@@ -214,11 +210,12 @@ void MysqlResultSet::BindResultSet(vector<MYSQL_BIND> &vecBind)
 	MYSQL_BIND bind;
 	while(field = mysql_fetch_field(m_pResMeta))
 	{
-		
+		unsigned long length = field->length;
+		my_bool error;
 		bind.buffer_type = field->type;
-		bind.is_null= &is_null[index];
-		bind.length= &length[index];
-		bind.error= &error[index];
+		bind.is_null = &m_vecIsNull[index];
+		bind.length = &length;
+		bind.error= &error;
 		
 		if( field->type == MYSQL_TYPE_LONG
 			|| field->type == MYSQL_TYPE_INT24
@@ -244,8 +241,8 @@ void MysqlResultSet::BindResultSet(vector<MYSQL_BIND> &vecBind)
 			|| field->type == MYSQL_TYPE_LONG_BLOB
 			|| field->type == MYSQL_TYPE_BIT )
 		{
-			bind.buffer = malloc(VTH_MAX_CHAR_SIZE*sizeof(char));
-			bind.buffer_length = VTH_MAX_CHAR_SIZE-1;
+			bind.buffer = malloc((field->length + 1)*sizeof(char));
+			bind.buffer_length = field->length;
 		}
 		else if( field->type == MYSQL_TYPE_TIME
 			|| field->type == MYSQL_TYPE_DATE
@@ -264,19 +261,38 @@ void MysqlResultSet::BindResultSet(vector<MYSQL_BIND> &vecBind)
 		else
 		{
 			bind.buffer_type = MYSQL_TYPE_VAR_STRING;
-			bind.buffer = malloc(VTH_MAX_CHAR_SIZE*sizeof(char));
-			bind.buffer_length = VTH_MAX_CHAR_SIZE-1;
+			bind.buffer = malloc(XDBC_MAXCHAR_OF_FIELD*sizeof(char));
+			bind.buffer_length = XDBC_MAXCHAR_OF_FIELD-1;
 		}
 		
-		vecBind.push_back(bind);
+		m_vecBind.push_back(bind);
 		index++;
 	}
 	
-	if(mysql_stmt_bind_result(m_pStmt, &vecBind[0]))
+	if (mysql_stmt_bind_result(m_pStmt, &m_vecBind[0]))
 	{
 		string errmsg = "mysql_stmt_bind_result failed.";
 		errmsg.append(mysql_stmt_error(m_pStmt));
 		throw SQLException(errmsg);
 	}
+}
+
+void MysqlResultSet::ReleaseVecBind()
+{
+	for (size_t i = 1; i < m_vecBind.size(); i++)
+	{
+		if (m_vecBind[i].buffer)
+		{
+			free(m_vecBind[i].buffer);
+			m_vecBind[i].buffer = NULL;
+		}
+	}
+
+	m_vecBind.clear();
+}
+
+void MysqlResultSet::ReleaseVecIsNull()
+{
+	m_vecIsNull.clear();
 }
 
