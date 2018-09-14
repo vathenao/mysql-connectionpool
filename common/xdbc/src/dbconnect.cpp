@@ -32,6 +32,7 @@ DbConnect::~DbConnect()
 
 void DbConnect::SetSqlText(string sql)
 {
+	iCurrIndex = 0;
 	if( m_pStmt )
 	{
 		delete m_pStmt;

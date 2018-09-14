@@ -39,18 +39,13 @@
 set(PTHREAD_CMAKE_DIR ${CMAKE_CURRENT_LIST_DIR} CACHE INTERNAL "pthread cmake script directory")
 
 #find pthread libaray
-SET(
-  PTHREAD_INCLUDE_DIR
-  PTHREAD_LIB_DIR
-)
-
 SET(_LIB_FALLBACK_PATH
-		../../pthread/*/lib
-    $ENV{ProgramFiles}/*pthread*/*/lib
-    $ENV{SystemDrive}/*pthread*/*/lib
+		${PTHREAD_CMAKE_DIR}/../../support/pthread/*/lib
 )
 
-FIND_LIBRARY(PTHREAD_LIB_DIR
+SET(PTHREAD_NAMES "pthreadVC2")
+
+FIND_LIBRARY(PTHREAD_LIB
     NAMES
       ${PTHREAD_NAMES}
     PATHS
@@ -60,8 +55,6 @@ FIND_LIBRARY(PTHREAD_LIB_DIR
 #find pthread.h
 SET(_INC_FALLBACK_PATH
 		${PTHREAD_CMAKE_DIR}/../../support/pthread/*/include
-    $ENV{ProgramFiles}/*pthread*/*/include
-    $ENV{SystemDrive}/*pthread*/*/include
 )
 
 FIND_PATH(PTHREAD_INC_DIR pthread.h ${_INC_FALLBACK_PATH})
@@ -71,4 +64,9 @@ if(NOT PTHREAD_INC_DIR)
                         "\"${_INC_FALLBACK_PATH}\"")
 endif()
 
+get_filename_component(PTHREAD_LIB_DIR ${PTHREAD_LIB} PATH)
+
+link_directories(${PTHREAD_LIB_DIR})
+
+MESSAGE(STATUS "  PTHREAD_LIB_DIR             : ${PTHREAD_LIB_DIR}")
 MESSAGE(STATUS "  PTHREAD_INC_DIR             : ${PTHREAD_INC_DIR}")

@@ -18,6 +18,12 @@ ${PTHREAD_INC_DIR}
 ${CMAKE_CURRENT_BINARY_DIR}/inc
 )
 
+vth_link_directories(
+	${VTH_COMMON_TARGET_PATH}/base
+	${VTH_COMMON_TARGET_PATH}/xdbc
+	${PTHREAD_LIB_DIR}
+)
+
 vth_add_sources(
 	stdafx.cpp 
 	stdafx.h
@@ -52,3 +58,14 @@ vth_add_sources(
 vth_add_resource(./src/xdbc.cfg ${XDBC_CFG_PATH}/xdbc.cfg)
 vth_add_resource(./src/global.h.in ${CMAKE_CURRENT_BINARY_DIR}/inc/global.h)
 vth_add_library(xdbc STATIC ${VTH_COMMON_TARGET_PATH}/xdbc)
+
+vth_add_packages(
+	base
+	mysqlclient
+)
+
+if(WIN32)
+vth_add_packages(
+	pthreadVC2
+)
+endif()
