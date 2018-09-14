@@ -25,7 +25,7 @@ vth_add_sources(
 	${PCH}
 )
 
-vth_add_executable(simple ${VTH_COMMON_TARGET_PATH}/demo)
+vth_add_executable(simple ${VTH_BIN_TARGET_PATH}/demo)
 vth_add_packages(
 	xdbc
 )
