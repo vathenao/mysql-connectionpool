@@ -37,6 +37,22 @@ endif()
 
 SET(CMAKE_CONFIGURATION_TYPES ${BUILD_TYPE})
 
+#release版本的mysqlclient.lib不支持MDd选项，将MDd和MTd替换为MD和MT
+if(MSVC AND BUILD_TYPE MATCHES "Debug")
+    set(CompilerFlags
+        CMAKE_CXX_FLAGS
+        CMAKE_CXX_FLAGS_DEBUG
+        CMAKE_CXX_FLAGS_RELEASE
+        CMAKE_C_FLAGS
+        CMAKE_C_FLAGS_DEBUG
+        CMAKE_C_FLAGS_RELEASE
+        )
+    foreach(CompilerFlag ${CompilerFlags})
+        string(REPLACE "/MDd" "/MD" ${CompilerFlag} "${${CompilerFlag}}")
+        string(REPLACE "/MTd" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
+    endforeach()
+endif()
+
 macro(list_element list_ref list_index element_ref)
 	list(GET ${list_ref} ${list_index} ${element_ref})
 	list(REMOVE_AT ${list_ref} ${list_index})
