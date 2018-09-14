@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "mysqlResultSet.h"
 
-#define XDBC_MAXCHAR_OF_FIELD 1024
-
 MysqlResultSet::MysqlResultSet(MYSQL_STMT* stmt):m_pStmt(stmt),m_pResMeta(NULL)
 {
 	BindResultSet(m_vecBind);
@@ -261,8 +259,8 @@ void MysqlResultSet::BindResultSet(vector<MYSQL_BIND> &vecBind)
 		else
 		{
 			bind.buffer_type = MYSQL_TYPE_VAR_STRING;
-			bind.buffer = malloc(XDBC_MAXCHAR_OF_FIELD*sizeof(char));
-			bind.buffer_length = XDBC_MAXCHAR_OF_FIELD-1;
+			bind.buffer = malloc((field->length + 1)*sizeof(char));
+			bind.buffer_length = field->length;
 		}
 		
 		m_vecBind.push_back(bind);
