@@ -110,22 +110,34 @@ void DbConnect::executeQuery() DECL_THROW_EXCEPTION(SQLException)
 
 void DbConnect::TransactionStart()
 {
-	m_pConn->TransactionStart();
+	xConnection *pConn;
+	ConnectionPool::GetInstance()->GetConnection(&pConn, 0);
+	pConn->TransactionStart();
+	ConnectionPool::GetInstance()->ReleaseConnection(pConn);
 }
 
 void DbConnect::TransactionEnd()
 {
-	m_pConn->TransactionEnd();
+	xConnection *pConn;
+	ConnectionPool::GetInstance()->GetConnection(&pConn, 0);
+	pConn->TransactionEnd();
+	ConnectionPool::GetInstance()->ReleaseConnection(pConn);
 }
 
 void DbConnect::RollBack()
 {
-	m_pConn->RollBack();
+	xConnection *pConn;
+	ConnectionPool::GetInstance()->GetConnection(&pConn, 0);
+	pConn->RollBack();
+	ConnectionPool::GetInstance()->ReleaseConnection(pConn);
 }
 
 void DbConnect::Commit()
 {
-	m_pConn->Commit();
+	xConnection *pConn;
+	ConnectionPool::GetInstance()->GetConnection(&pConn, 0);
+	pConn->Commit();
+	ConnectionPool::GetInstance()->ReleaseConnection(pConn);
 }
 
 bool DbConnect::next() DECL_THROW_EXCEPTION(SQLException)

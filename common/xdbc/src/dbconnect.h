@@ -19,10 +19,10 @@ public:
 	
 	int executeUpdate() DECL_THROW_EXCEPTION(SQLException);
 	void executeQuery() DECL_THROW_EXCEPTION(SQLException);
-	void TransactionStart();
-	void TransactionEnd();
-	void RollBack();
-	void Commit();
+	static void TransactionStart();
+	static void TransactionEnd();
+	static void RollBack();
+	static void Commit();
 	
 	bool next() DECL_THROW_EXCEPTION(SQLException);
 	char getByte(int index);
