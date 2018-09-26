@@ -40,7 +40,7 @@ private:
 	void LoadConfig(const string &fileName="");
 	
 private:
-	static ConnectionPool* connpool;
+	static ConnectionPool* sm_connpool;
 	int m_maxSize;
 	int m_curSize;
 	pthread_mutex_t m_lock;	//thread lock
@@ -58,10 +58,10 @@ private:
 	public:
 		~Deleter()
 		{
-			if (ConnectionPool::connpool != NULL)
+			if (ConnectionPool::sm_connpool != NULL)
 			{
-				ConnectionPool::connpool->DestoryConnPool();
-				delete ConnectionPool::connpool;
+				ConnectionPool::sm_connpool->DestoryConnPool();
+				delete ConnectionPool::sm_connpool;
 			}
 		}
 	};

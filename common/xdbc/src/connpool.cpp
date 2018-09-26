@@ -36,28 +36,28 @@ __CONNPOOL_LOCK_END_NAMESPACE
 
 //create a connection pool instance for each process, befor enter main
 
-ConnectionPool* ConnectionPool::connpool = NULL;
+ConnectionPool* ConnectionPool::sm_connpool = NULL;
 ConnectionPool::Deleter ConnectionPool::deleter;
 
 ConnectionPool::ConnectionPool():m_curSize(0),m_itimeout(60)
 {
 	//cout << "come to the connection pool constructor" << endl;
-	Initialize();
 }
 
 ConnectionPool* ConnectionPool::GetInstance()
 {
-	if( connpool )
+	if( sm_connpool )
 	{
-		return connpool;
+		return sm_connpool;
 	}
 	
 	pthread_mutex_lock(&__CONNPOOL_LOCK_NAMESPACE::ConnPoolLock);
-	if( !connpool )
+	if( !sm_connpool )
 	{
 		try
 		{
-			connpool = new ConnectionPool();
+			sm_connpool = new ConnectionPool();
+			sm_connpool->Initialize();
 		}
 		catch (SQLException ex)	//catch the exception here because of the lock has to be released
 		{
@@ -80,7 +80,7 @@ ConnectionPool* ConnectionPool::GetInstance()
 		}
 	}
 	pthread_mutex_unlock(&__CONNPOOL_LOCK_NAMESPACE::ConnPoolLock);
-	return connpool;
+	return sm_connpool;
 }
 
 void ConnectionPool::GetConnection(xConnection **pConn, int timeout)

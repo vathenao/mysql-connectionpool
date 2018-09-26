@@ -6,13 +6,18 @@
 
 #define TIMEOUT 0
 
-DbConnect::DbConnect()
+DbConnect::DbConnect() 
+	: m_sRunSql("")
+	, iCurrIndex(0)
+	, m_pStmt(NULL)
+	, m_rs(NULL)
 {
+	//GetConnection may throw an exception,any operation of apply resource
+	//like new,malloc,handle etc. must after it.
 	ConnectionPool::GetInstance()->GetConnection(&m_pConn,TIMEOUT);
+
 	m_sRunSql = "";
 	iCurrIndex = 0;
-	m_pStmt = NULL;
-	m_rs = NULL;
 }
 
 DbConnect::~DbConnect()
@@ -22,6 +27,7 @@ DbConnect::~DbConnect()
 	if( m_pStmt )
 	{
 		delete m_pStmt;
+		m_pStmt = NULL;
 	}
 	
 	if( m_rs )
