@@ -29,6 +29,7 @@ public:
 	virtual void TransactionEnd()=0;
 	virtual void RollBack()=0;
 	virtual void Commit()=0;
+	virtual void ConnectToDB() = 0;
 	
 	/*
 	**<D>:Lock the connection

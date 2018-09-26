@@ -8,11 +8,13 @@ class MysqlPrepareStatement;
 class MysqlConnection : public xConnection
 {
 public:
-	MysqlConnection() DECL_THROW_EXCEPTION(SQLException);
+	MysqlConnection();
 	MysqlConnection(const string &host, const string &user, const string &password, const string &database);
 	~MysqlConnection();
 	
 	xPrepareStatement* prepareStatement(const string &sqlStr) DECL_THROW_EXCEPTION(SQLException);
+
+	void ConnectToDB();
 	void TransactionStart();
 	void TransactionEnd();
 	void RollBack();
@@ -24,9 +26,9 @@ private:
 	MysqlConnection &operator=(const MysqlConnection &mysql){}
 	
 	void LoadConnectionInfo(const string &fileName="");
-	void ConnectToDB();
 	
 private:
+	bool m_bIsLoadConf;
 	MYSQL m_Conn;
 	string m_host;
 	string m_user;

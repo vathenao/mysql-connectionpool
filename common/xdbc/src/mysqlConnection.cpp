@@ -3,22 +3,21 @@
 #include "mysqlPrepareStatement.h"
 #include <base/configHelper.h>
 
-MysqlConnection::MysqlConnection() DECL_THROW_EXCEPTION(SQLException):m_pPreStmt(NULL)
+MysqlConnection::MysqlConnection()
+	: m_pPreStmt(NULL)
+	, m_bIsLoadConf(false)
 {	
-	//load connection information
-	LoadConnectionInfo();
 	
-	ConnectToDB();	
 }
 
-MysqlConnection::MysqlConnection(const string &host, const string &user, const string &password, const string &database):m_pPreStmt(NULL)
+MysqlConnection::MysqlConnection(const string &host, const string &user, const string &password, const string &database)
+	: m_pPreStmt(NULL)
+	, m_bIsLoadConf(false)
+	, m_host(host)
+	, m_user(user)
+	, m_password(password)
+	, m_database(database)
 {
-	m_host = host;
-	m_user = user;
-	m_password = password;
-	m_database = database;
-	
-	ConnectToDB();
 }
 
 MysqlConnection::~MysqlConnection()
@@ -69,6 +68,7 @@ void MysqlConnection::LoadConnectionInfo(const string &fileName)
 		if( isNotEqual( fileName, "" ) )
 		{
 			configHelper.ReLoad(fileName);
+			m_bIsLoadConf = true;
 		}
 		else
 		{
@@ -76,6 +76,7 @@ void MysqlConnection::LoadConnectionInfo(const string &fileName)
 			defaultFileName.append(XDBC_CFG_PATH);
 			defaultFileName.append("/xdbc.cfg");
 			configHelper.ReLoad(defaultFileName);
+			m_bIsLoadConf = true;
 		}
 		
 		if( !configHelper.GetConfigStringValue("ConnInfo", "HOST", m_host) )
@@ -108,6 +109,9 @@ void MysqlConnection::LoadConnectionInfo(const string &fileName)
 
 void MysqlConnection::ConnectToDB()
 {
+	if (!m_bIsLoadConf)
+		LoadConnectionInfo();
+
 	mysql_init(&m_Conn);
 	if( !mysql_real_connect(&m_Conn, m_host.c_str(), m_user.c_str(), 
 							m_password.c_str(), m_database.c_str(), 0, NULL, 0) )
