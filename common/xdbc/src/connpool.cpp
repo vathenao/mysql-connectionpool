@@ -184,6 +184,7 @@ xConnection* ConnectionPool::CreateConnection()
 	if( m_dbtype == "MYSQL" )
 	{
 		pConn = new MysqlConnection(m_host, m_user, m_password, m_database);
+		pConn->ConnectToDB();
 	}
 	else if( m_dbtype == "ORACLE" )
 	{
