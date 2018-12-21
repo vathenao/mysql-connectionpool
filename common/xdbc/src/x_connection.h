@@ -70,6 +70,11 @@ public:
 	{
 		return !m_bIsFree;
 	}
+
+	virtual bool IsConnected()
+	{
+		return false;
+	}
 	
 protected:
 	bool m_bIsFree;	//In general,this property will be used to describe a connection that in a connection pool is free or not

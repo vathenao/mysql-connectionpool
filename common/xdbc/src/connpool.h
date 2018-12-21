@@ -4,17 +4,24 @@
 #include "x_connection.h"
 #include <pthread.h>
 
-/*
-#define SUCCESS 0
-#define FAILURE 1
-*/
 class ConnectionPool
 {
-private:
 	ConnectionPool();
-	
+	~ConnectionPool();
+
 public:
 	static ConnectionPool* GetInstance();
+
+	/*<D> Add a database connection to the connection pool
+	/*<P> pConn: A pointer point to the connection which will be added to the connection pool.*/
+	/*<Remark> Usually, this function is used to add connection to the connection pool at a working thread*/
+	void AddConnection(xConnection* pconn);
+
+	/*<D> remove connection from the connection pool
+	/*<P> pConn: A pointer point to the connection which will be remove from the connection pool.*/
+	/*<Remark> Usually, this function is used to remove connection to the connection pool at a working thread*/
+	void RemoveConnection(xConnection* pconn);
+
 	/*<D> Get a free connection from the connection pool, if there is no free connection in the 
 	connection pool, this function will create a new connection except the connection pool is full.*/
 	/*<P> pConn: A pointer that use for receiving the return connection point to a pointer which point to the connection.*/
@@ -24,48 +31,55 @@ public:
 	configuration file with TIMEOUT under the section [ConnPoolConf] */
 	/*<Remark> Finish using a connection, function ReleaseConnection must be called to release 
 	the connection, otherwise it will be mark as busy all the time.*/
-	void GetConnection(xConnection **pConn, int timeout=0);
-	
+	xConnection* GetConnection();
+
 	/*<D> Release the connection to the connection pool.*/
 	/*<P> Pointer to the connection which want to release.*/
 	/*<Remark> Finish using a connection, function ReleaseConnection must be called to release 
 	the connection, otherwise it will be mark as busy all the time.*/
 	void ReleaseConnection(xConnection*);
+
+	/*<D> get count of the connection pool */
+	/*<P> none*/
+	/*<return> size of connection pool*/
+	size_t Count();
+
+	/*<D> check the connection poll is full */
+	/*<P> none*/
+	/*<return> return full if the connection pool is full, otherwise return false*/
+	bool IsFull();
+	
+	/*<D> check if has any free connection in the connection pool */
+	/*<P> Pointer to a size_t used to recieve the count of free connection*/
+	/*<return> return full if the connection pool is full, otherwise return false*/
+	bool HasFree(OUT size_t *freeConnCount = NULL);
+
+private:
+	void Init();
 	
 private:
-	void GetConn(xConnection **pConn);
-	void Initialize();
-	xConnection* CreateConnection();
-	void DestoryConnPool();
-	void LoadConfig(const string &fileName="");
-	
-private:
-	static ConnectionPool* sm_connpool;
-	int m_maxSize;
-	int m_curSize;
-	pthread_mutex_t m_lock;	//thread lock
+	pthread_mutex_t m_lock;
 	list<xConnection*> m_pConnList;
-	//connection information
-	string m_host;
-	string m_user;
-	string m_password;
-	string m_database;
-	string m_dbtype;
-	int m_itimeout;
-	
-	class Deleter
-	{
-	public:
-		~Deleter()
-		{
-			if (ConnectionPool::sm_connpool != NULL)
-			{
-				ConnectionPool::sm_connpool->DestoryConnPool();
-				delete ConnectionPool::sm_connpool;
-			}
-		}
-	};
-	// 定义一个静态的Deleter实例
-	static Deleter deleter;
+	static ConnectionPool* sm_connpool;
+
+private:
+	size_t m_maxConns;
+};
+
+class ConnectionPoolMgr
+{
+	ConnectionPoolMgr();
+	~ConnectionPoolMgr();
+
+public:
+	static ConnectionPoolMgr* GetInstance();
+	void GetConnection(xConnection **pConn, int timeout = 0);
+	void ReleaseConnection(xConnection*);
+
+	void Init();
+
+private:
+	list<xConnection*> m_pConnList;
+	int m_timeout;
 };
 #endif

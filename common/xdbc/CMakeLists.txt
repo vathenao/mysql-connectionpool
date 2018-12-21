@@ -50,8 +50,9 @@ vth_add_sources(
 	src/connpoolException.cpp
 	src/connpoolException.h
 	src/dbconnect.cpp
-	
 	src/global.h.in
+	src/xdbc.h
+	src/xdbc.cpp
 )
 
 vth_add_resource(./src/xdbc.cfg ${XDBC_CFG_PATH}/xdbc.cfg)

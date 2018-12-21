@@ -14,7 +14,7 @@ DbConnect::DbConnect()
 {
 	//GetConnection may throw an exception,any operation of apply resource
 	//like new,malloc,handle etc. must after it.
-	ConnectionPool::GetInstance()->GetConnection(&m_pConn,TIMEOUT);
+	ConnectionPoolMgr::GetInstance()->GetConnection(&m_pConn,TIMEOUT);
 
 	m_sRunSql = "";
 	iCurrIndex = 0;
@@ -22,7 +22,7 @@ DbConnect::DbConnect()
 
 DbConnect::~DbConnect()
 {
-	ConnectionPool::GetInstance()->ReleaseConnection(m_pConn);
+	ConnectionPoolMgr::GetInstance()->ReleaseConnection(m_pConn);
 	
 	if( m_pStmt )
 	{
@@ -117,33 +117,33 @@ void DbConnect::executeQuery() DECL_THROW_EXCEPTION(SQLException)
 void DbConnect::TransactionStart()
 {
 	xConnection *pConn;
-	ConnectionPool::GetInstance()->GetConnection(&pConn, 0);
+	ConnectionPoolMgr::GetInstance()->GetConnection(&pConn, 0);
 	pConn->TransactionStart();
-	ConnectionPool::GetInstance()->ReleaseConnection(pConn);
+	ConnectionPoolMgr::GetInstance()->ReleaseConnection(pConn);
 }
 
 void DbConnect::TransactionEnd()
 {
 	xConnection *pConn;
-	ConnectionPool::GetInstance()->GetConnection(&pConn, 0);
+	ConnectionPoolMgr::GetInstance()->GetConnection(&pConn, 0);
 	pConn->TransactionEnd();
-	ConnectionPool::GetInstance()->ReleaseConnection(pConn);
+	ConnectionPoolMgr::GetInstance()->ReleaseConnection(pConn);
 }
 
 void DbConnect::RollBack()
 {
 	xConnection *pConn;
-	ConnectionPool::GetInstance()->GetConnection(&pConn, 0);
+	ConnectionPoolMgr::GetInstance()->GetConnection(&pConn, 0);
 	pConn->RollBack();
-	ConnectionPool::GetInstance()->ReleaseConnection(pConn);
+	ConnectionPoolMgr::GetInstance()->ReleaseConnection(pConn);
 }
 
 void DbConnect::Commit()
 {
 	xConnection *pConn;
-	ConnectionPool::GetInstance()->GetConnection(&pConn, 0);
+	ConnectionPoolMgr::GetInstance()->GetConnection(&pConn, 0);
 	pConn->Commit();
-	ConnectionPool::GetInstance()->ReleaseConnection(pConn);
+	ConnectionPoolMgr::GetInstance()->ReleaseConnection(pConn);
 }
 
 bool DbConnect::next() DECL_THROW_EXCEPTION(SQLException)
