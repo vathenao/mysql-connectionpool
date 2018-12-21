@@ -2,9 +2,9 @@
 #define  __PLATFORM_DEFINES_H__
 
 #ifdef linux
-#define _Sleep(x) usleep((x)*1000) 
+#define XDBC_Sleep(x) usleep((x)*1000) 
 #elif WIN32
-#define _Sleep Sleep
+#define XDBC_Sleep Sleep
 #endif
 
 #ifdef WIN32

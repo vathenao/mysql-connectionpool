@@ -223,7 +223,7 @@ void ConnectionPoolMgr::GetConnection(xConnection **pConn, int timeout /*= 0*/)
 		if (!pConnPool->HasFree() && !pConnPool->IsFull())
 		{
 			ReleaseSemaphore(g_createConnNotify, 1, NULL);
-			_Sleep(0);
+			XDBC_Sleep(20);
 		}
 		
 		*pConn = pConnPool->GetConnection();
@@ -245,7 +245,7 @@ void ConnectionPoolMgr::GetConnection(xConnection **pConn, int timeout /*= 0*/)
 			throw ConnpollException(errmsg);
 		}
 
-		_Sleep(0);
+		XDBC_Sleep(20);
 	}
 }
 
@@ -262,5 +262,5 @@ void ConnectionPoolMgr::Init()
 
 	pthread_t createConnThread;
 	pthread_create(&createConnThread, NULL,CreateConnectionWorkerThread, NULL);
-	_Sleep(0);
+	XDBC_Sleep(20);
 }
