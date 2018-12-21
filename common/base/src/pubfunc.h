@@ -4,7 +4,6 @@
 #include "stringUtils.h"
 #include <sstream>
 #include "CoreException.h"
-__USING_WILLOW_NS
 
 #define exstrcpy(dest_array, source) estrncpy(dest_array, source, #dest_array, #source, __FILE__, __LINE__)
 //#define  CopyToCharArray

@@ -17,7 +17,7 @@ typedef enum tagVCHPERRCODE{
 
 #define MAX_CHARACTER_OF_LINE 1025
 
-class VConfigHelper
+class BASE_EXPORT VConfigHelper
 {
 public:
 	VConfigHelper();

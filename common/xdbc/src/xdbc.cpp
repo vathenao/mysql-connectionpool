@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "global.h"
+#include "xdbcdefs.h"
 #include "xdbc.h"
 #include "sqlException.h"
 

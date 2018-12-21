@@ -1,11 +1,10 @@
 #ifndef __CONNPOOL_EXCEPTION_H__
 #define __CONNPOOL_EXCEPTION_H__
 
+#include "global.h"
 #include "base/exception.h"
 
-__USING_WILLOW_NS
-
-class ConnpollException: public CBaseException
+class XDBC_EXPORT ConnpollException: public CBaseException
 {
 public:
 	ConnpollException();

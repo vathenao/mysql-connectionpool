@@ -2,6 +2,7 @@ vth_add_definitions(
 	-DUNICODE
 	-D_UNICODE
 	-DHAVE_STRUCT_TIMESPEC
+	-DBASE_NO_EXPORTS
 )
 if(WIN32)
 	vth_add_definitions(-D_AFXDLL)

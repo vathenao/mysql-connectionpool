@@ -1,6 +1,7 @@
 vth_add_definitions(
 	-DUNICODE
 	-D_UNICODE
+	-DBASE_NO_EXPORTS
 )
 if(WIN32)
 	vth_add_definitions(-D_AFXDLL)
@@ -15,6 +16,7 @@ vth_include_directories(
 vth_add_sources(
 	stdafx.cpp
 	stdafx.h
+	global.h
 
 	src/BaseException.cpp
 	src/BaseException.h
@@ -29,7 +31,6 @@ vth_add_sources(
 	src/libalgo.incl
 	src/libbase.h
 	src/libcommon.h
-	src/libconfig.h
 	src/libmarco.incl
 	src/platform.h
 	src/pubfunc.h

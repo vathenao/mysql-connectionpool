@@ -1,7 +1,7 @@
 #ifndef __X_CONNECTION_H__
 #define __X_CONNECTION_H__
 
-#include "global.h"
+#include "xdbcdefs.h"
 #include "sqlException.h"
 
 class xPrepareStatement;

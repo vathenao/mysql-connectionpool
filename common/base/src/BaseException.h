@@ -5,7 +5,7 @@
  
 __WILLOW_BEGIN_NAMESPACE
 
-class CBaseException : public CoreException
+class BASE_EXPORT CBaseException : public CoreException
 {
 public:
 	CBaseException();

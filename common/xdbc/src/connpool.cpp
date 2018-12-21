@@ -174,7 +174,7 @@ void* CreateConnectionWorkerThread(void*)
 			pConn->ConnectToDB();
 			pConnPool->AddConnection(pConn);
 		}
-		catch (CoreException ex)
+		catch (const CoreException& ex)
 		{
 			//handle database connect exception
 			//cout << ex.getMessage() << endl;

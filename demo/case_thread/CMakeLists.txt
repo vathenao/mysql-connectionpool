@@ -2,6 +2,7 @@ vth_add_definitions(
 	-DUNICODE
 	-D_UNICODE
 	-DHAVE_STRUCT_TIMESPEC
+	-DBASE_NO_EXPORTS
 )
 if(WIN32)
 	vth_add_definitions(-D_AFXDLL)
@@ -22,11 +23,13 @@ vth_link_directories(
 SET(PCH stdafx.cpp stdafx.h)
 vth_add_sources(
 	thread.cpp
-
 	${PCH}
 )
 
 vth_add_executable(case_thread ${VTH_BIN_TARGET_PATH}/demo)
+
+
 vth_add_packages(
 	xdbc
+	pthreadVC2
 )
