@@ -13,5 +13,21 @@
 #define SEMHANDLE sem_t
 #endif //WIN32
 
+#ifndef DLL_API_EXPORT
+#if defined WIN32
+#define DLL_API_EXPORT	__declspec(dllexport)
+#else
+#define DLL_API_EXPORT  
+#endif
+#endif
+
+#ifndef DLL_API_IMPORT
+#if defined WIN32
+#define DLL_API_IMPORT	__declspec(dllimport)
+#else
+#define DLL_API_IMPORT
+#endif
+#endif
+
 #endif /* __PLATFORM_DEFINES_H__ */
 

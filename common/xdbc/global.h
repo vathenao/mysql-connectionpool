@@ -1,6 +1,8 @@
 #ifndef __XDBC_GLOBAL_H__
 #define __XDBC_GLOBAL_H__
 
+#include "base/platform.h"
+
 #if defined(__XDBC_HAS_NAMESPACES) && !defined(__XDBC_NO_NAMESPACES)
 #define __XDBC_NS baselib
 #define __XDBC_BEGIN_NAMESPACE namespace xdbclib {
@@ -16,9 +18,9 @@
 #ifndef XDBC_EXPORT
   #ifndef XDBC_NO_EXPORTS
 	#ifdef  XDBC_LIB
-	#define XDBC_EXPORT __declspec(dllexport)
+	#define XDBC_EXPORT DLL_API_EXPORT
 	#else
-	#define XDBC_EXPORT __declspec(dllimport)
+	#define XDBC_EXPORT DLL_API_EXPORT
 	#endif
   #else
 	#define XDBC_EXPORT
