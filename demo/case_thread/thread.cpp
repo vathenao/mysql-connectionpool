@@ -217,13 +217,16 @@ int main(int argc, char* argv[])
 			for (int i = 0; i < 100; i++) //同时开的线程数应要小于数据库支持的连接数，不然会出现卡在mysql_ping语句上面，目前不知道原因为何
 			{
 				pthread_t work = create_worker();
+
+#ifdef WIN32
 				if (!work.p)
 					continue;
+#endif //WIN32
 
 				lstHandle.push_back(work);
 			}
 
-			for (auto handle = lstHandle.begin(); handle != lstHandle.end(); handle++)
+			for (list<pthread_t>::iterator handle = lstHandle.begin(); handle != lstHandle.end(); handle++)
 			{
 				pthread_join(*handle, NULL);
 			}

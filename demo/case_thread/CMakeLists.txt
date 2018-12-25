@@ -31,5 +31,9 @@ vth_add_executable(case_thread ${VTH_BIN_TARGET_PATH}/demo)
 
 vth_add_packages(
 	xdbc
+)
+
+if(WIN32)
+vth_add_packages(
 	pthreadVC2
 )

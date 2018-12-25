@@ -206,6 +206,10 @@ configure_file(${input} ${output})
 endmacro()
 
 macro(vth_add_library name type outputdir)
+#linux平台静态库为了被动态库引用时可以生成位置无关代码，统一添加-fPIC编译选项
+if(UNIX AND ${type} MATCHES STATIC)
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+endif()
 ADD_LIBRARY(${name} ${type} ${SOURCE_FILES})
 _output_location(${name} ${type} ${outputdir})
 SET(VTH_CURRENT_TARGET ${name})

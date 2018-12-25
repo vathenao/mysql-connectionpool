@@ -23,8 +23,7 @@ namespace
 {
 	pthread_mutex_t g_connMgrLock = PTHREAD_MUTEX_INITIALIZER;
 	pthread_mutex_t g_connPoolLock = PTHREAD_MUTEX_INITIALIZER;
-	//SEMHANDLE g_createConnNotify = NULL;
-	sem_t g_createConnNotify = NULL;
+	sem_t g_createConnNotify;
 }
 
 ConnectionPool::ConnectionPool()
