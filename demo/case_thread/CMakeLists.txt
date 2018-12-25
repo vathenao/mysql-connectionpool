@@ -37,3 +37,4 @@ if(WIN32)
 vth_add_packages(
 	pthreadVC2
 )
+endif()
