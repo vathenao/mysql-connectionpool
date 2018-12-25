@@ -13,6 +13,8 @@
 #include "connpoolException.h"
 #include "base/platform.h"
 
+#include <semaphore.h>
+
 #ifndef WIN32
 #include <unistd.h>
 #endif // !WIN32
@@ -21,7 +23,8 @@ namespace
 {
 	pthread_mutex_t g_connMgrLock = PTHREAD_MUTEX_INITIALIZER;
 	pthread_mutex_t g_connPoolLock = PTHREAD_MUTEX_INITIALIZER;
-	SEMHANDLE g_createConnNotify = NULL;
+	//SEMHANDLE g_createConnNotify = NULL;
+	sem_t g_createConnNotify = NULL;
 }
 
 ConnectionPool::ConnectionPool()
@@ -159,12 +162,11 @@ void* CreateConnectionWorkerThread(void*)
 	xdbc::XDBC_DB_TYPE dbType = xdbc::connpool::GetDbType();
 	ConnectionPool* pConnPool = ConnectionPool::GetInstance();
 	ConnFactory* factory = ConnFactory::GetInstance();
-	if (g_createConnNotify == NULL)
-		g_createConnNotify = CreateSemaphore(NULL, 0, 1, NULL);
 
+	sem_init(&g_createConnNotify, 0, 0);
 	while (true)
 	{
-		WaitForSingleObject(g_createConnNotify, INFINITE);
+		sem_wait(&g_createConnNotify);
 		if (pConnPool->IsFull())
 			continue;
 
@@ -222,7 +224,7 @@ void ConnectionPoolMgr::GetConnection(xConnection **pConn, int timeout /*= 0*/)
 	{
 		if (!pConnPool->HasFree() && !pConnPool->IsFull())
 		{
-			ReleaseSemaphore(g_createConnNotify, 1, NULL);
+			sem_post(&g_createConnNotify);
 			XDBC_Sleep(20);
 		}
 		

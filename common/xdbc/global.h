@@ -20,7 +20,7 @@
 	#ifdef  XDBC_LIB
 	#define XDBC_EXPORT DLL_API_EXPORT
 	#else
-	#define XDBC_EXPORT DLL_API_EXPORT
+	#define XDBC_EXPORT DLL_API_IMPORT
 	#endif
   #else
 	#define XDBC_EXPORT

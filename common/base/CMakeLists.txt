@@ -11,6 +11,7 @@ endif()
 vth_include_directories(
 .
 ./src
+../inc
 )
 
 vth_add_sources(

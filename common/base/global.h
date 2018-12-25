@@ -1,7 +1,7 @@
 #ifndef __BASE_GLOBAL_H__
 #define __BASE_GLOBAL_H__
 
-#include "platform.h"
+#include <base/platform.h>
 
 #if defined(__WILLOW_HAS_NAMESPACES) && !defined(__WILLOW_NO_NAMESPACES)
 #   define __WILLOW_NS baselib

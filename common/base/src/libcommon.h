@@ -138,6 +138,6 @@ typedef double DATE;
 __USING_STL_NS
 
 #include "libalgo.incl"
-#include "global.h"
+#include "base/global.h"
 
 #endif
