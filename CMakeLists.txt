@@ -7,3 +7,4 @@ PROJECT(connpool)
 include(cmake/vth.cmake)
 
 vth_add_subdirectory(common)
+vth_add_subdirectory(demo)

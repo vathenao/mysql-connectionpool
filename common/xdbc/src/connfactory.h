@@ -2,14 +2,17 @@
 #define __CONN_FACTORY_H__
 
 #include "x_connection.h"
+#include "xdbc.h"
 
-class CConnFactory
+class ConnFactory
 {
 public:
-	static xConnection* GetConn();
-	~CConnFactory();
+	static ConnFactory* GetInstance();
+
+	xConnection* GetConn(xdbc::XDBC_DB_TYPE type);
+
 private:
-	CConnFactory();
+	ConnFactory();
 };
 
 #endif

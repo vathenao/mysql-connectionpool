@@ -1,7 +1,7 @@
 #ifndef __X_CONNECTION_H__
 #define __X_CONNECTION_H__
 
-#include "global.h"
+#include "xdbcdefs.h"
 #include "sqlException.h"
 
 class xPrepareStatement;
@@ -29,6 +29,7 @@ public:
 	virtual void TransactionEnd()=0;
 	virtual void RollBack()=0;
 	virtual void Commit()=0;
+	virtual void ConnectToDB() = 0;
 	
 	/*
 	**<D>:Lock the connection
@@ -68,6 +69,11 @@ public:
 	virtual bool IsLock()
 	{
 		return !m_bIsFree;
+	}
+
+	virtual bool IsConnected()
+	{
+		return false;
 	}
 	
 protected:

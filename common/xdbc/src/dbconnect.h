@@ -1,11 +1,12 @@
 #ifndef __DB_CONNECT_H__
 #define __DB_CONNECT_H__
 
+#include "global.h"
 #include "xdbcWrapper.h"
 #include "connpoolException.h"
 
 class xConnection;
-class DbConnect
+class XDBC_EXPORT DbConnect
 {
 public:
 	DbConnect();
@@ -19,10 +20,10 @@ public:
 	
 	int executeUpdate() DECL_THROW_EXCEPTION(SQLException);
 	void executeQuery() DECL_THROW_EXCEPTION(SQLException);
-	void TransactionStart();
-	void TransactionEnd();
-	void RollBack();
-	void Commit();
+	static void TransactionStart();
+	static void TransactionEnd();
+	static void RollBack();
+	static void Commit();
 	
 	bool next() DECL_THROW_EXCEPTION(SQLException);
 	char getByte(int index);
@@ -39,7 +40,7 @@ public:
 		
 private:
 	DbConnect(const DbConnect &dbconn){}
-	DbConnect &operator=(const DbConnect &dbconn){}
+	DbConnect &operator=(const DbConnect &dbconn) { return *this; }
 	
 	xConnection *m_pConn;
 	xPrepareStatement *m_pStmt;

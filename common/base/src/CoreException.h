@@ -4,7 +4,7 @@
 #include "libcommon.h"
 
 __WILLOW_BEGIN_NAMESPACE
-class CoreException
+class BASE_EXPORT CoreException
 {
 public:
   virtual ~CoreException()throw();

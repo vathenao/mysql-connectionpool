@@ -7,5 +7,6 @@
 #include "stringBuffer.h"
 #include "stringUtils.h"
 #include "pubfunc.h"
+#include "platform.h"
 
 #endif

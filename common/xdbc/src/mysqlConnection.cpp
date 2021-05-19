@@ -1,24 +1,15 @@
 #include "stdafx.h"
 #include "mysqlConnection.h"
 #include "mysqlPrepareStatement.h"
+#include "xdbc.h"
+
 #include <base/configHelper.h>
 
-MysqlConnection::MysqlConnection() DECL_THROW_EXCEPTION(SQLException):m_pPreStmt(NULL)
-{	
-	//load connection information
-	LoadConnectionInfo();
-	
-	ConnectToDB();	
-}
-
-MysqlConnection::MysqlConnection(const string &host, const string &user, const string &password, const string &database):m_pPreStmt(NULL)
+MysqlConnection::MysqlConnection()
+	: m_pPreStmt(NULL)
+	, m_bConned(false)
 {
-	m_host = host;
-	m_user = user;
-	m_password = password;
-	m_database = database;
-	
-	ConnectToDB();
+
 }
 
 MysqlConnection::~MysqlConnection()
@@ -60,61 +51,42 @@ void MysqlConnection::Commit()
 	preStmt.executeUpdate(sqlStr);
 }
 
-
-void MysqlConnection::LoadConnectionInfo(const string &fileName)
+bool MysqlConnection::IsConnected()
 {
-	try
+	int ret = mysql_ping(&m_Conn);
+	if (ret != 0)
 	{
-		VConfigHelper configHelper;
-		if( isNotEqual( fileName, "" ) )
-		{
-			configHelper.ReLoad(fileName);
-		}
-		else
-		{
-			string defaultFileName;
-			defaultFileName.append(XDBC_CFG_PATH);
-			defaultFileName.append("/xdbc.cfg");
-			configHelper.ReLoad(defaultFileName);
-		}
-		
-		if( !configHelper.GetConfigStringValue("ConnInfo", "HOST", m_host) )
-		{
-			throw SQLException( configHelper.GetLastErrorMsg() );
-		}
-		
-		if( !configHelper.GetConfigStringValue("ConnInfo", "USER", m_user) )
-		{
-			throw SQLException( configHelper.GetLastErrorMsg() );
-		}
-		
-		if( !configHelper.GetConfigStringValue("ConnInfo", "PASSWD", m_password) )
-		{
-			throw SQLException( configHelper.GetLastErrorMsg() );
-		}
-		
-		if( !configHelper.GetConfigStringValue("ConnInfo", "DATABASE", m_database) )
-		{
-			throw SQLException( configHelper.GetLastErrorMsg() );
-		}
-		
+		cout << "mysql_ping failed" << mysql_error(&m_Conn) << endl;
+		return false;
 	}
-	catch(CBaseException ex)
-	{
-		throw SQLException( ex.getMessage() );
-	}
-	
+
+	return true;
 }
 
 void MysqlConnection::ConnectToDB()
 {
+	if (m_bConned)
+		return;
+
+	string host = xdbc::db::GetHost();
+	string user = xdbc::db::GetUser();
+	string passwd = xdbc::db::GetPwd();
+	string database = xdbc::db::GetDatabaseName();
+
 	mysql_init(&m_Conn);
-	if( !mysql_real_connect(&m_Conn, m_host.c_str(), m_user.c_str(), 
-							m_password.c_str(), m_database.c_str(), 0, NULL, 0) )
+	if( !mysql_real_connect(&m_Conn, host.c_str(), user.c_str(),
+		passwd.c_str(), database.c_str(), 0, NULL, 0) )
 	{
 		string errmsg;
 		errmsg.append("connect to database fail.");
 		errmsg.append(mysql_error(&m_Conn));
 		throw SQLException(errmsg);
 	}
+
+	char value = 1;
+	int timeOut = 5;
+	mysql_options(&m_Conn, MYSQL_OPT_RECONNECT, &value);
+	mysql_options(&m_Conn, MYSQL_OPT_READ_TIMEOUT, (char*)&timeOut);
+
+	m_bConned = true;
 }

@@ -4,6 +4,8 @@ vth_add_definitions(
 	-DUNICODE
 	-D_UNICODE
 	-DHAVE_STRUCT_TIMESPEC
+	-DXDBC_LIB
+	-DBASE_NO_EXPORTS
 )
 if(WIN32)
 	vth_add_definitions(-D_AFXDLL)
@@ -18,9 +20,15 @@ ${PTHREAD_INC_DIR}
 ${CMAKE_CURRENT_BINARY_DIR}/inc
 )
 
+vth_link_directories(
+	${VTH_COMMON_TARGET_PATH}/base
+	${PTHREAD_LIB_DIR}
+)
+
 vth_add_sources(
 	stdafx.cpp 
 	stdafx.h
+	global.h
 	
 	src/dbconnect.h
 	src/libxdbc.h
@@ -45,10 +53,22 @@ vth_add_sources(
 	src/connpoolException.cpp
 	src/connpoolException.h
 	src/dbconnect.cpp
-	
-	src/global.h.in
+	src/xdbc.h
+	src/xdbcdefs.h.in
+	src/xdbc.cpp
 )
 
 vth_add_resource(./src/xdbc.cfg ${XDBC_CFG_PATH}/xdbc.cfg)
-vth_add_resource(./src/global.h.in ${CMAKE_CURRENT_BINARY_DIR}/inc/global.h)
-vth_add_library(xdbc STATIC ${VTH_COMMON_TARGET_PATH}/xdbc)
+vth_add_resource(./src/xdbcdefs.h.in ${CMAKE_CURRENT_BINARY_DIR}/inc/xdbcdefs.h)
+vth_add_library(xdbc SHARED ${VTH_COMMON_TARGET_PATH}/xdbc)
+
+vth_add_packages(
+	base
+	mysqlclient
+)
+
+if(WIN32)
+vth_add_packages(
+	pthreadVC2
+)
+endif()

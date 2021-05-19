@@ -1,6 +1,7 @@
 vth_add_definitions(
 	-DUNICODE
 	-D_UNICODE
+	-DBASE_NO_EXPORTS
 )
 if(WIN32)
 	vth_add_definitions(-D_AFXDLL)
@@ -10,31 +11,33 @@ endif()
 vth_include_directories(
 .
 ./src
+../inc
 )
 
 vth_add_sources(
-	stdafx.cpp 
+	stdafx.cpp
 	stdafx.h
+	global.h
 
-	src/BaseException.cpp 
-	src/BaseException.h 
-	src/ConfigHelper.cpp 
-	src/ConfigHelper.h 
-	src/CoreException.cpp 
-	src/CoreException.h 
-	src/date.cpp 
-	src/date.h 
-	src/date2038.cpp 
-	src/date2038.h 
-	src/libalgo.incl 
-	src/libbase.h 
-	src/libcommon.h 
-	src/libconfig.h 
-	src/libmarco.incl 
-	src/pubfunc.h 
-	src/stringBuffer.cpp 
-	src/stringBuffer.h 
-	src/stringUtils.cpp 
+	src/BaseException.cpp
+	src/BaseException.h
+	src/ConfigHelper.cpp
+	src/ConfigHelper.h
+	src/CoreException.cpp
+	src/CoreException.h
+	src/date.cpp
+	src/date.h
+	src/date2038.cpp
+	src/date2038.h
+	src/libalgo.incl
+	src/libbase.h
+	src/libcommon.h
+	src/libmarco.incl
+	src/platform.h
+	src/pubfunc.h
+	src/stringBuffer.cpp
+	src/stringBuffer.h
+	src/stringUtils.cpp
 	src/stringUtils.h
 )
 

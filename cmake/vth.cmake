@@ -37,6 +37,22 @@ endif()
 
 SET(CMAKE_CONFIGURATION_TYPES ${BUILD_TYPE})
 
+#release版本的mysqlclient.lib不支持MDd选项，将MDd和MTd替换为MD和MT
+if(MSVC AND BUILD_TYPE MATCHES "Debug")
+    set(CompilerFlags
+        CMAKE_CXX_FLAGS
+        CMAKE_CXX_FLAGS_DEBUG
+        CMAKE_CXX_FLAGS_RELEASE
+        CMAKE_C_FLAGS
+        CMAKE_C_FLAGS_DEBUG
+        CMAKE_C_FLAGS_RELEASE
+        )
+    foreach(CompilerFlag ${CompilerFlags})
+        string(REPLACE "/MDd" "/MD" ${CompilerFlag} "${${CompilerFlag}}")
+        string(REPLACE "/MTd" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
+    endforeach()
+endif()
+
 macro(list_element list_ref list_index element_ref)
 	list(GET ${list_ref} ${list_index} ${element_ref})
 	list(REMOVE_AT ${list_ref} ${list_index})
@@ -107,6 +123,16 @@ elseif(${type} MATCHES SHARED)
 		endif()
 	else()
 		message(FATAL_ERROR "Unsupported platform type: ${CMAKE_SYSTEM_NAME}")
+	endif()
+elseif(${type} MATCHES EXECUTED)
+	if(BUILD_TYPE MATCHES "Debug")
+		set_target_properties(${name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${outputdir})
+		set_target_properties(${name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG ${outputdir})
+	elseif(BUILD_TYPE MATCHES "Release")
+		set_target_properties(${name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${outputdir})
+		set_target_properties(${name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE ${outputdir})
+	else()
+		set_target_properties(${name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${outputdir})
 	endif()
 elseif(${type} MATCHES MODULE) #暂未实现
 	message(FATAL_ERROR "type ${type} do not implement yet.")
@@ -180,6 +206,25 @@ configure_file(${input} ${output})
 endmacro()
 
 macro(vth_add_library name type outputdir)
+#linux平台静态库为了被动态库引用时可以生成位置无关代码，统一添加-fPIC编译选项
+if(UNIX AND ${type} MATCHES STATIC)
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+endif()
 ADD_LIBRARY(${name} ${type} ${SOURCE_FILES})
 _output_location(${name} ${type} ${outputdir})
+SET(VTH_CURRENT_TARGET ${name})
+endmacro()
+
+macro(vth_add_executable name outputdir)
+add_executable(${name} ${SOURCE_FILES})
+_output_location(${name} EXECUTED ${outputdir})
+SET(VTH_CURRENT_TARGET ${name})
+endmacro()
+
+macro(vth_link_directories)
+link_directories(${ARGN})
+endmacro()
+
+macro(vth_add_packages)
+target_link_libraries(${VTH_CURRENT_TARGET} ${ARGN})
 endmacro()

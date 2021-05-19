@@ -4,8 +4,6 @@
 #include <mysql.h>
 #include "sqlException.h"
 
-__USING_WILLOW_NS
-
 /*
 * Class declares interfaces for performing SQL statement.
 *

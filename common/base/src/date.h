@@ -10,6 +10,7 @@
 #ifndef __WILLOW_DATE_H__
 #define __WILLOW_DATE_H__
 
+#include "global.h"
 #include "date2038.h"
 
 __WILLOW_BEGIN_NAMESPACE
@@ -28,7 +29,7 @@ __WILLOW_BEGIN_NAMESPACE
 /**
  *
  */
-class TimeSpan 
+class BASE_EXPORT TimeSpan
 {
 public:
 
@@ -169,7 +170,7 @@ private:
 };
 
 
-class Date //: public CObject
+class BASE_EXPORT Date //: public CObject
 {
 public:
 

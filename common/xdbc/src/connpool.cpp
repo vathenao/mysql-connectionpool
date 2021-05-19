@@ -7,282 +7,261 @@
 ****************************************/
 
 #include "stdafx.h"
-#include "mysqlConnection.h"
-#include "connpoolException.h"
 #include "connpool.h"
+#include "xdbc.h"
+#include "connfactory.h"
+#include "connpoolException.h"
+#include "base/platform.h"
 
-#include <base/configHelper.h>
-#include <base/pubfunc.h>
+#include <semaphore.h>
 
 #ifndef WIN32
 #include <unistd.h>
 #endif // !WIN32
 
-#define __CONNPOOL_LOCK_HAS_NAMESPACES
-
-# if defined(__CONNPOOL_LOCK_HAS_NAMESPACES) && !defined(__CONNPOOL_LOCK_NO_NAMESPACES)
-#   define __CONNPOOL_LOCK_BEGIN_NAMESPACE namespace connpoollocklib {
-#   define __CONNPOOL_LOCK_END_NAMESPACE }
-#	define __CONNPOOL_LOCK_NAMESPACE connpoollocklib
-# else
-#   define __CONNPOOL_LOCK_BEGIN_NAMESPACE
-#   define __CONNPOOL_LOCK_END_NAMESPACE
-#	define __CONNPOOL_LOCK_NAMESPACE
-# endif
-
-__CONNPOOL_LOCK_BEGIN_NAMESPACE
-pthread_mutex_t ConnPoolLock = PTHREAD_MUTEX_INITIALIZER;
-__CONNPOOL_LOCK_END_NAMESPACE
-
-//create a connection pool instance for each process, befor enter main
-
-ConnectionPool* ConnectionPool::connpool = NULL;
-ConnectionPool::Deleter ConnectionPool::deleter;
-
-ConnectionPool::ConnectionPool():m_curSize(0),m_itimeout(60)
+namespace
 {
-	//cout << "come to the connection pool constructor" << endl;
-	Initialize();
+	pthread_mutex_t g_connMgrLock = PTHREAD_MUTEX_INITIALIZER;
+	pthread_mutex_t g_connPoolLock = PTHREAD_MUTEX_INITIALIZER;
+	sem_t g_createConnNotify;
 }
 
+ConnectionPool::ConnectionPool()
+{
+	
+}
+
+ConnectionPool::~ConnectionPool()
+{
+	for (list<xConnection*>::iterator it = m_pConnList.begin(); it != m_pConnList.end(); it++)
+	{
+		delete (*it);
+	}
+
+	m_pConnList.clear();
+}
+
+ConnectionPool* ConnectionPool::sm_connpool = new ConnectionPool;
 ConnectionPool* ConnectionPool::GetInstance()
 {
-	if( connpool )
+	static bool bInited = false;
+	if (bInited)
+		return sm_connpool;
+
+	pthread_mutex_lock(&g_connPoolLock);
+	if (!bInited)
 	{
-		return connpool;
+		sm_connpool->Init();
+		bInited = true;
 	}
-	
-	pthread_mutex_lock(&__CONNPOOL_LOCK_NAMESPACE::ConnPoolLock);
-	if( !connpool )
-	{
-		try
-		{
-			connpool = new ConnectionPool();
-		}
-		catch (SQLException ex)	//catch the exception here because of the lock has to be released
-		{
-			string errmsg = "ConnectionPool::GetInstance fail,";
-			errmsg.append(ex.getMessage());
-			pthread_mutex_unlock(&__CONNPOOL_LOCK_NAMESPACE::ConnPoolLock);
-			throw SQLException(errmsg);
-		}
-		catch (exception ex)
-		{
-			string errmsg = "ConnectionPool::GetInstance fail,";
-			errmsg.append(ex.what());
-			pthread_mutex_unlock(&__CONNPOOL_LOCK_NAMESPACE::ConnPoolLock);
-			throw SQLException(errmsg);
-		}
-		catch(...)
-		{
-			pthread_mutex_unlock(&__CONNPOOL_LOCK_NAMESPACE::ConnPoolLock);
-			throw SQLException("ConnectionPool::GetInstance, unkown exception!");
-		}
-	}
-	pthread_mutex_unlock(&__CONNPOOL_LOCK_NAMESPACE::ConnPoolLock);
-	return connpool;
+	pthread_mutex_unlock(&g_connPoolLock);
+	return sm_connpool;
 }
 
-void ConnectionPool::GetConnection(xConnection **pConn, int timeout)
+void ConnectionPool::AddConnection(xConnection* pConn)
 {
-	time_t begin;
-	time_t now;
-	time(&begin);
-	int _timeout = timeout > 0 ? timeout : m_itimeout; 
-	
-	while(1)
-	{
-		GetConn( pConn );
-		if( *pConn )
-		{
-			break;
-		}
-		time(&now);
-		if( now - begin > _timeout)
-		{
-			string errmsg = "ERR_GETCONN_TIMEOUT";
-			throw ConnpollException(errmsg);
-		}
-		
-#ifdef WIN32
-		Sleep(1000);
-#else
-		sleep(1);
-#endif // WIN32
-	}
-}
-
-void ConnectionPool::GetConn(xConnection **pConn)
-{
-	*pConn = NULL;
 	pthread_mutex_lock(&m_lock);
-	
-	//return a connection from the connection pool
-	list<xConnection*>::iterator it;
-	for( it = m_pConnList.begin(); it != m_pConnList.end(); it++ )
+	m_pConnList.push_back(pConn);
+	pthread_mutex_unlock(&m_lock);
+}
+
+void ConnectionPool::RemoveConnection(xConnection* pconn)
+{
+	pthread_mutex_lock(&m_lock);
+
+	for (list<xConnection*>::iterator it = m_pConnList.begin(); it != m_pConnList.end(); )
 	{
-		if( (*it)->IsFree())
+		if (*it == pconn)
+		{
+			it = m_pConnList.erase(it);
+			continue;
+		}
+
+		it++;
+	}
+
+	pthread_mutex_unlock(&m_lock);
+}
+
+xConnection* ConnectionPool::GetConnection()
+{
+	//return a connection from the connection pool
+	pthread_mutex_lock(&m_lock);
+	xConnection *pConn = NULL;
+	list<xConnection*>::iterator it;
+	for (it = m_pConnList.begin(); it != m_pConnList.end(); it++)
+	{
+		if ((*it)->IsFree())
 		{
 			(*it)->Lock();
-			*pConn = *it;
+			pConn = *it;
 			break;
 		}
 	}
-	
-	if( !(*pConn) && ( m_curSize < m_maxSize ) )
-	{
-		try
-		{
-			*pConn = CreateConnection();
-			m_pConnList.push_back(*pConn);
-			(*pConn)->Lock();
-		}
-		catch(SQLException ex)	//catch the exception here because of the lock has to be released
-		{
-			string errmsg = "GetConnection fail,";
-			errmsg.append(ex.getMessage());
-			pthread_mutex_unlock(&m_lock);
-			throw SQLException(errmsg);
-		}
-		catch(exception ex)
-		{
-			string errmsg = "GetConnection fail,";
-			errmsg.append(ex.what());
-			pthread_mutex_unlock(&m_lock);
-			throw SQLException(errmsg);
-		}
-		catch(...)
-		{
-			string errmsg = "GetConnection fail,other exceptions.";
-			pthread_mutex_unlock(&m_lock);
-			throw SQLException(errmsg);
-		}
-	}
-	
+
 	pthread_mutex_unlock(&m_lock);
-	//return *pConn;
-}
-
-void ConnectionPool::Initialize()
-{
-	xConnection *pConn;
-	pthread_mutex_init( &m_lock, NULL );
-	
-	//load the configuration file
-	LoadConfig();
-	
-	for(int i=0; i < m_maxSize/2; i++)
-	{
-		pConn = CreateConnection();
-		m_pConnList.push_back(pConn);	
-	}
-}
-
-xConnection* ConnectionPool::CreateConnection()
-{
-	xConnection *pConn;
-	if( m_dbtype == "MYSQL" )
-	{
-		pConn = new MysqlConnection(m_host, m_user, m_password, m_database);
-	}
-	else if( m_dbtype == "ORACLE" )
-	{
-		//return you oracle connection in this case
-		string errmsg = "XDBC_CONN_TYPE of ORACLE does not support";
-		throw SQLException(errmsg);
-	}
-	else
-	{
-		//unkown database type£¬do something in this scope	
-		string errmsg = " unkown database type, check the support values of XDBC_CONN_TYPE ";
-		throw SQLException(errmsg);
-	}
-	
-	m_curSize++;
 	return pConn;
 }
 
 void ConnectionPool::ReleaseConnection(xConnection* pConn)
 {
-	if( pConn )
-	{
+	if (pConn)
 		pConn->UnLock();
-	}
 }
 
-void ConnectionPool::DestoryConnPool()
+size_t ConnectionPool::Count()
 {
-	pthread_mutex_destroy( &m_lock );
-	pthread_mutex_destroy( &connpoollocklib::ConnPoolLock );
-	list<xConnection*>::iterator it;
-	for( it = m_pConnList.begin(); it != m_pConnList.end(); it++ )
-	{
-		delete (*it);
-	}
+	size_t count = 0;
+	pthread_mutex_lock(&m_lock);
+	count = m_pConnList.size();
+	pthread_mutex_unlock(&m_lock);
+
+	return count;
 }
 
-void ConnectionPool::LoadConfig(const string &fileName)
+bool ConnectionPool::IsFull()
 {
-	try
+	return Count() >= m_maxConns;
+}
+
+bool ConnectionPool::HasFree(OUT size_t *freeConnCount /*= NULL*/)
+{
+	/*size_t tatolCount = Count();
+	size_t usedCount = CurrentUsed();
+	size_t freeCount = tatolCount > usedCount ? tatolCount - usedCount : 0;
+
+	if (NULL != freeConnCount)
+		*freeConnCount = freeCount;
+
+	return freeCount > 0;*/
+	
+	bool bHasFree = false;
+	for (list<xConnection*>::iterator it = m_pConnList.begin(); it != m_pConnList.end(); it++)
 	{
-		VConfigHelper configHelper;
-		if( isNotEqual( fileName, "" ) )
+		if ((*it)->IsFree())
 		{
-			configHelper.ReLoad(fileName);
+			bHasFree = true;
+			break;
 		}
-		else
+	}
+
+	return bHasFree;
+}
+
+void ConnectionPool::Init()
+{
+	pthread_mutex_init(&m_lock, NULL);
+	m_pConnList.clear();
+
+	m_maxConns = xdbc::connpool::GetMaxConnSize();
+}
+
+void* CreateConnectionWorkerThread(void*)
+{
+	xdbc::XDBC_DB_TYPE dbType = xdbc::connpool::GetDbType();
+	ConnectionPool* pConnPool = ConnectionPool::GetInstance();
+	ConnFactory* factory = ConnFactory::GetInstance();
+
+	sem_init(&g_createConnNotify, 0, 0);
+	while (true)
+	{
+		sem_wait(&g_createConnNotify);
+		if (pConnPool->IsFull())
+			continue;
+
+		try 
 		{
-			string defaultFileName;
-			defaultFileName.append(XDBC_CFG_PATH);
-			defaultFileName.append("/xdbc.cfg");
-			configHelper.ReLoad(defaultFileName);
+			xConnection* pConn = factory->GetConn(dbType);
+			pConn->ConnectToDB();
+			pConnPool->AddConnection(pConn);
+		}
+		catch (const CoreException& ex)
+		{
+			//handle database connect exception
+			//cout << ex.getMessage() << endl;
+		}
+	}
+
+	return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////
+ConnectionPoolMgr::ConnectionPoolMgr()
+{
+}
+
+ConnectionPoolMgr::~ConnectionPoolMgr()
+{
+
+}
+
+ConnectionPoolMgr* ConnectionPoolMgr::GetInstance()
+{
+	static ConnectionPoolMgr* pConnpoolMgr = NULL;
+	if (pConnpoolMgr)
+		return pConnpoolMgr;
+
+	pthread_mutex_lock(&g_connMgrLock);
+	if (!pConnpoolMgr)
+	{
+		pConnpoolMgr = new ConnectionPoolMgr();
+		pConnpoolMgr->Init();
+	}
+	pthread_mutex_unlock(&g_connMgrLock);
+	return pConnpoolMgr;
+}
+
+void ConnectionPoolMgr::GetConnection(xConnection **pConn, int timeout /*= 0*/)
+{
+	time_t begin;
+	time_t now;
+	time(&begin);
+	int _timeout = timeout > 0 ? timeout : m_timeout;
+
+	ConnectionPool* pConnPool = ConnectionPool::GetInstance();
+	while (1)
+	{
+		if (!pConnPool->HasFree() && !pConnPool->IsFull())
+		{
+			sem_post(&g_createConnNotify);
+			XDBC_Sleep(20);
 		}
 		
-		if( !configHelper.GetConfigStringValue("ConnInfo", "HOST", m_host) )
+		*pConn = pConnPool->GetConnection();
+		if (*pConn)
 		{
-			throw SQLException(configHelper.GetLastErrorMsg());
-		}
-		
-		if( !configHelper.GetConfigStringValue("ConnInfo", "USER", m_user) )
-		{
-			throw SQLException(configHelper.GetLastErrorMsg());
-		}
-		
-		if( !configHelper.GetConfigStringValue("ConnInfo", "PASSWD", m_password) )
-		{
-			throw SQLException(configHelper.GetLastErrorMsg());
-		}
-		
-		if( !configHelper.GetConfigStringValue("ConnInfo", "DATABASE", m_database) )
-		{
-			throw SQLException(configHelper.GetLastErrorMsg());
-		}
-		
-		if( !configHelper.GetConfigStringValue("ConnPoolConf", "DBTYPE", m_dbtype) )
-		{
-			throw SQLException(configHelper.GetLastErrorMsg());
-		}
-		
-		if( !configHelper.GetConfigIntValue("ConnPoolConf", "MAXCONNSIZE", m_maxSize) )
-		{
-			throw SQLException(configHelper.GetLastErrorMsg());
-		}
-		m_maxSize = m_maxSize < 200 ? m_maxSize : 200;
-		
-		if( !configHelper.GetConfigIntValue("ConnPoolConf", "TIMEOUT", m_itimeout) )
-		{
-			if( configHelper.GetLastErrorCode() != VCHP_KEY_NOTFOUND )
+			//break;
+			if ((*pConn)->IsConnected())
 			{
-				throw SQLException(configHelper.GetLastErrorMsg());
+				break;
 			}
+			
+			pConnPool->RemoveConnection(*pConn);
 		}
-		m_itimeout = (m_itimeout < 0 || configHelper.GetLastErrorCode() == VCHP_KEY_NOTFOUND) ? 60: m_itimeout;
-		
+
+		time(&now);
+		if (now - begin > _timeout)
+		{
+			string errmsg = "ERR_GETCONN_TIMEOUT";
+			throw ConnpollException(errmsg);
+		}
+
+		XDBC_Sleep(20);
 	}
-	catch(CBaseException ex)
-	{
-		string errmsg = "Read configuration file infomation,";
-		errmsg.append(ex.getMessage());
-		throw SQLException(errmsg);
-	}
+}
+
+void ConnectionPoolMgr::ReleaseConnection(xConnection* pConn)
+{
+	ConnectionPool::GetInstance()->ReleaseConnection(pConn);
+}
+
+void ConnectionPoolMgr::Init()
+{
+	m_timeout = xdbc::connpool::GetConnTimeOut();
+	if (m_timeout < 0)
+		m_timeout = 10;
+
+	pthread_t createConnThread;
+	pthread_create(&createConnThread, NULL,CreateConnectionWorkerThread, NULL);
+	XDBC_Sleep(20);
 }

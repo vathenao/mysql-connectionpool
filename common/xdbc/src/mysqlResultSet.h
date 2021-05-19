@@ -3,9 +3,6 @@
 
 #include "x_resultset.h"
 
-#define VTH_MAX_FEILD 200
-#define VTH_MAX_CHAR_SIZE 513
-
 class MysqlResultSet: public xResultSet
 {
 public:
@@ -26,17 +23,15 @@ public:
 	Date getDateTime(size_t index);
 
 private:
-	void BindResultSet(vector<MYSQL_BIND> &vecBind);
+	void BindResultSet();
+	void ReleaseVecBind();
+	void ReleaseVecIsNull();
 	
 private:
 	MYSQL_STMT* m_pStmt;
 	MYSQL_RES *m_pResMeta;
 	vector<MYSQL_BIND> m_vecBind;
-	
-	my_bool is_null[VTH_MAX_FEILD];
-	my_bool error[VTH_MAX_FEILD];
-	unsigned long length[VTH_MAX_FEILD];
-	
+	vector<my_bool> m_vecIsNull;
 };
 
 #endif
